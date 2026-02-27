@@ -31,14 +31,14 @@ A package is just a zip (`.aipkg`) containing an `aipkg.json` manifest and artif
 
 ### What can you package?
 
-| Artifact type | Format | Example |
-|---------------|--------|---------|
-| **Skills** | Markdown | Reusable instruction sets for AI assistants |
-| **Agents** | Markdown | Persona definitions ("you are a senior Go developer") |
+| Artifact type          | Format   | Example                                                       |
+| ---------------------- | -------- | ------------------------------------------------------------- |
+| **Skills**             | Markdown | Reusable instruction sets for AI assistants                   |
+| **Agents**             | Markdown | Persona definitions ("you are a senior Go developer")         |
 | **Agent Instructions** | Markdown | Project-level rules ("prefer stdlib, use table-driven tests") |
-| **Prompts** | Markdown | Standalone prompt templates |
-| **Commands** | Markdown | Slash commands |
-| **MCP Servers** | JSON | Server configuration snippets |
+| **Prompts**            | Markdown | Standalone prompt templates                                   |
+| **Commands**           | Markdown | Slash commands                                                |
+| **MCP Servers**        | JSON     | Server configuration snippets                                 |
 
 A single package can bundle multiple artifacts: an agent persona, project-level coding conventions, two skills, and an MCP config, all installed atomically.
 
@@ -79,15 +79,15 @@ A single package can bundle multiple artifacts: an agent persona, project-level 
 
 This repository contains the **aipkg specification**: reference documentation and JSON schemas that define how the ecosystem works.
 
-| Area | What it defines |
-|------|-----------------|
-| **Package manifest** | The `aipkg.json` schema for both `project` and `package` manifests |
-| **Artifact types** | Conventions for each artifact type: skill, agent, agent-instructions, prompt, command, mcp-server |
-| **Naming rules** | Scoped naming (`@scope/name`), reserved namespaces, dot-notation for installed artifacts |
-| **Package archive** | The `.aipkg` format (zip), internal structure |
-| **Source types** | Interface contract for package sources (GitHub, HTTP, and future sources) |
-| **Adapters** | Interface contract for tool-specific adapters (Claude Code, Cursor, Windsurf, etc.) |
-| **Virtual packages** | Recipe format for the `@virtual/` namespace, community wrappers for upstream repos |
+| Area                 | What it defines                                                                                   |
+| -------------------- | ------------------------------------------------------------------------------------------------- |
+| **Package manifest** | The `aipkg.json` schema for both `project` and `package` manifests                                |
+| **Artifact types**   | Conventions for each artifact type: skill, agent, agent-instructions, prompt, command, mcp-server |
+| **Naming rules**     | Scoped naming (`@scope/name`), reserved namespaces, dot-notation for installed artifacts          |
+| **Package archive**  | The `.aipkg` format (zip), internal structure                                                     |
+| **Source types**     | Interface contract for package sources (GitHub, HTTP, and future sources)                         |
+| **Adapters**         | Interface contract for tool-specific adapters (Claude Code, Cursor, Windsurf, etc.)               |
+| **Virtual packages** | Recipe format for the `@virtual/` namespace, community wrappers for upstream repos                |
 
 ```
 docs/       Reference documentation
@@ -109,8 +109,8 @@ schema/     JSON Schema files for machine-readable validation
 
 ## Related repositories
 
-| Repository | Purpose |
-|------------|---------|
+| Repository                                              | Purpose  |
+| ------------------------------------------------------- | -------- |
 | [ai-interop/aipkg](https://github.com/ai-interop/aipkg) | CLI tool |
 
 ## License

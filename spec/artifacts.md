@@ -6,14 +6,14 @@ aipkg does not invent new artifact formats. Where an established standard exists
 
 ## Overview
 
-| Type | Format | Structure | Adapter | Standard |
-|------|--------|-----------|---------|----------|
-| `skill` | Markdown | Directory | Symlink | [Agent Skills](https://agentskills.io/specification) |
-| `agent` | Markdown | File | Symlink | None |
-| `agent-instructions` | Markdown | File | Merge | [AGENTS.md](https://agents.md/) |
-| `mcp-server` | JSON | File | Merge | [MCP](https://modelcontextprotocol.io) |
-| `prompt` | Markdown/text | File | Symlink | None |
-| `command` | Markdown | File | Symlink | None |
+| Type                 | Format        | Structure | Adapter | Standard                                             |
+| -------------------- | ------------- | --------- | ------- | ---------------------------------------------------- |
+| `skill`              | Markdown      | Directory | Symlink | [Agent Skills](https://agentskills.io/specification) |
+| `agent`              | Markdown      | File      | Symlink | None                                                 |
+| `agent-instructions` | Markdown      | File      | Merge   | [AGENTS.md](https://agents.md/)                      |
+| `mcp-server`         | JSON          | File      | Merge   | [MCP](https://modelcontextprotocol.io)               |
+| `prompt`             | Markdown/text | File      | Symlink | None                                                 |
+| `command`            | Markdown      | File      | Symlink | None                                                 |
 
 ## `skill`
 
@@ -136,9 +136,9 @@ Instructions are single files:
 Like `mcp-server` artifacts, instructions are **merged** rather than symlinked. The adapter:
 
 1. Reads the instruction content
-2. Wraps it in package-identifying markers (so it can be cleanly removed later)
-3. Appends it to the project's agent instruction file
-4. On removal, finds and removes the marked section
+1. Wraps it in package-identifying markers (so it can be cleanly removed later)
+1. Appends it to the project's agent instruction file
+1. On removal, finds and removes the marked section
 
 The specific target file and marker format are adapter-dependent. For example, one adapter might append to AGENTS.md while another merges into a tool-specific rules file.
 
@@ -242,9 +242,9 @@ Format: `type(scope): description`
 
 Supported frontmatter fields:
 
-| Field | Description |
-|-------|-------------|
-| `description` | Short explanation shown in help/autocomplete |
+| Field           | Description                                                          |
+| --------------- | -------------------------------------------------------------------- |
+| `description`   | Short explanation shown in help/autocomplete                         |
 | `argument-hint` | Hint about expected arguments (e.g., `[filename]`, `[issue-number]`) |
 
 ### In the manifest

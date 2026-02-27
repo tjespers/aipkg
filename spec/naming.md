@@ -105,7 +105,7 @@ The CLI rejects packages that use a reserved scope. The full list is maintained 
 ## Summary table
 
 | Component     | Characters            | Length | Additional rules                                               |
-|---------------|-----------------------|--------|----------------------------------------------------------------|
+| ------------- | --------------------- | ------ | -------------------------------------------------------------- |
 | Scope         | `a-z`, `0-9`, `-`     | 1-39   | No leading/trailing/consecutive hyphens                        |
 | Package name  | `a-z`, `0-9`, `-`     | 1-64   | No leading/trailing/consecutive hyphens                        |
 | Artifact name | `a-z`, `0-9`, `-`     | 1-64   | No leading/trailing/consecutive hyphens, unique within package |

@@ -36,10 +36,10 @@ A single file format serves both roles. The `type` field determines which one it
 
 **Required.** The role of this manifest.
 
-| Value | Meaning |
-|-------|---------|
+| Value       | Meaning                                            |
+| ----------- | -------------------------------------------------- |
 | `"package"` | This is a publishable package containing artifacts |
-| `"project"` | This is a project that consumes packages |
+| `"project"` | This is a project that consumes packages           |
 
 Every other field's behavior depends on this value. See [field availability by type](#field-availability-by-type) for the full matrix.
 
@@ -130,14 +130,14 @@ Must be unique within the package.
 
 **Required.** The artifact type. Determines how adapters handle the artifact.
 
-| Type | Content | Adapter behavior |
-|------|---------|------------------|
-| `skill` | Markdown directory | Symlinked to the tool's skill/rule directory |
-| `prompt` | Markdown file | Symlinked to the tool's prompt directory |
-| `command` | Markdown file | Symlinked to the tool's command directory |
-| `agent` | Markdown file | Symlinked to the tool's agent directory |
-| `agent-instructions` | Markdown file | Merged into the tool's agent instruction file |
-| `mcp-server` | JSON config | Merged into the tool's MCP settings file |
+| Type                 | Content            | Adapter behavior                              |
+| -------------------- | ------------------ | --------------------------------------------- |
+| `skill`              | Markdown directory | Symlinked to the tool's skill/rule directory  |
+| `prompt`             | Markdown file      | Symlinked to the tool's prompt directory      |
+| `command`            | Markdown file      | Symlinked to the tool's command directory     |
+| `agent`              | Markdown file      | Symlinked to the tool's agent directory       |
+| `agent-instructions` | Markdown file      | Merged into the tool's agent instruction file |
+| `mcp-server`         | JSON config        | Merged into the tool's MCP settings file      |
 
 See [Artifact Types](artifacts.md) for detailed format conventions per type.
 
@@ -192,10 +192,10 @@ An array of repository source definitions, checked in order. First match wins.
 
 **Required.** The source type. v1 supports:
 
-| Type | Resolution |
-|------|------------|
+| Type     | Resolution                       |
+| -------- | -------------------------------- |
 | `github` | Fetches from GitHub Releases API |
-| `http` | Fetches from a URL template |
+| `http`   | Fetches from a URL template      |
 
 <!-- TODO: link to docs/sources.md when AIPKG-5 is written -->
 
@@ -233,16 +233,16 @@ With this config, any `@my-org/*` package must come from `github.com/my-org/*`. 
 
 ## Field availability by type
 
-| Field | `project` | `package` |
-|-------|-----------|-----------|
-| `type` | required | required |
-| `name` | optional | required |
-| `version` | ignored | required |
-| `description` | optional | optional |
-| `license` | ignored | optional |
-| `artifacts` | not allowed | required |
-| `require` | optional | optional |
-| `repositories` | optional | optional |
+| Field          | `project`   | `package` |
+| -------------- | ----------- | --------- |
+| `type`         | required    | required  |
+| `name`         | optional    | required  |
+| `version`      | ignored     | required  |
+| `description`  | optional    | optional  |
+| `license`      | ignored     | optional  |
+| `artifacts`    | not allowed | required  |
+| `require`      | optional    | optional  |
+| `repositories` | optional    | optional  |
 
 ## Complete examples
 
