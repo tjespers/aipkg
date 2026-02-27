@@ -1,0 +1,64 @@
+version: 2
+
+project_name: aipkg
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - main: ./cmd/aipkg
+    binary: aipkg
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.ShortCommit}}
+      - -X main.date={{.Date}}
+
+archives:
+  - format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        format: zip
+
+checksum:
+  name_template: checksums.txt
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^chore:"
+      - "^ci:"
+      - "^style:"
+
+# TODO: Enable after creating ai-interop/homebrew-tap repo (AIPKG-37)
+# brews:
+#   - repository:
+#       owner: ai-interop
+#       name: homebrew-tap
+#     homepage: https://aipkg.dev
+#     description: The unified AI Package Manager
+#     license: Apache-2.0
+#     install: |
+#       bin.install "aipkg"
+
+# TODO: Enable after creating ai-interop/scoop-bucket repo (AIPKG-38)
+# scoops:
+#   - repository:
+#       owner: ai-interop
+#       name: scoop-bucket
+#     homepage: https://aipkg.dev
+#     description: The unified AI Package Manager
+#     license: Apache-2.0
