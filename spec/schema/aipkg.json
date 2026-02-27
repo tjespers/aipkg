@@ -13,7 +13,7 @@
     "name": {
       "description": "Scoped package name (@scope/package-name).",
       "type": "string",
-      "pattern": "^@[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?/[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$"
+      "pattern": "^@(?!.*--)[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?/[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$"
     },
     "version": {
       "description": "Package version. Strict semver (MAJOR.MINOR.PATCH).",
@@ -41,7 +41,7 @@
       "description": "Dependencies on other packages. Keys are scoped names, values are exact semver versions.",
       "type": "object",
       "propertyNames": {
-        "pattern": "^@[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?/[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$"
+        "pattern": "^@(?!.*--)[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?/[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$"
       },
       "additionalProperties": {
         "type": "string",
@@ -76,7 +76,7 @@
         "name": {
           "description": "Artifact name within the package.",
           "type": "string",
-          "pattern": "^[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$"
+          "pattern": "^(?!.*--)[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$"
         },
         "type": {
           "description": "Artifact type.",
@@ -106,7 +106,7 @@
         "scope": {
           "description": "Restrict to a specific @scope.",
           "type": "string",
-          "pattern": "^@[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?$"
+          "pattern": "^@(?!.*--)[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?$"
         },
         "canonical": {
           "description": "Lock this scope to this source only.",

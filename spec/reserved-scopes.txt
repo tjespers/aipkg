@@ -1,0 +1,97 @@
+# Reserved scopes for the aipkg ecosystem.
+# The CLI uses this file to reject packages under reserved scopes.
+#
+# Lines starting with # are comments.
+# Lines ending with * are prefix matches (e.g., "aipkg*" matches "aipkg", "aipkg-tools", etc.).
+# All other lines are exact matches.
+#
+# To request a reservation or claim a scope, open an issue on the spec repo.
+
+# Project-owned (prefix-reserved)
+aipkg*
+ai-interop*
+virtual
+
+# Generic / ecosystem terms
+official
+core
+std
+stdlib
+plugin
+plugins
+adapter
+adapters
+test
+example
+demo
+internal
+private
+ai
+community
+registry
+vendor
+types
+package
+packages
+
+# AI / LLM providers
+anthropic
+claude
+openai
+chatgpt
+google
+alphabet
+gemini
+deepmind
+google-cloud
+microsoft
+copilot
+github-copilot
+azure
+meta
+llama
+mistral
+mistralai
+cohere
+perplexity
+xai
+grok
+stability
+stabilityai
+huggingface
+aws
+amazon
+bedrock
+nvidia
+apple
+samsung
+alibaba
+qwen
+baidu
+deepseek
+groq
+ibm
+watsonx
+granite
+cognition
+devin
+
+# AI coding tools
+cursor
+windsurf
+codeium
+replit
+sourcegraph
+cody
+tabnine
+continue
+zed
+jetbrains
+
+# Platforms
+github
+gitlab
+bitbucket
+vercel
+netlify
+cloudflare

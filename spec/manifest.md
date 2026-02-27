@@ -64,7 +64,7 @@ The name in the manifest is authoritative. If a package is hosted at `github.com
 
 When a project manifest includes a `name`, it's informational only (for logging, error messages). It has no effect on dependency resolution.
 
-<!-- TODO: link to docs/naming.md when AIPKG-3 is written -->
+See [Naming & Namespaces](naming.md) for the full naming rules, reserved scopes, and dot-notation conventions.
 
 ### `version`
 
