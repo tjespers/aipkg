@@ -34,12 +34,13 @@ A package is just a zip (`.aipkg`) containing an `aipkg.json` manifest and artif
 | Artifact type | Format | Example |
 |---------------|--------|---------|
 | **Skills** | Markdown | Reusable instruction sets for AI assistants |
+| **Agents** | Markdown | Persona definitions ("you are a senior Go developer") |
+| **Agent Instructions** | Markdown | Project-level rules ("prefer stdlib, use table-driven tests") |
 | **Prompts** | Markdown | Standalone prompt templates |
 | **Commands** | Markdown | Slash commands |
-| **Agents** | Markdown | Persona definitions |
 | **MCP Servers** | JSON | Server configuration snippets |
 
-A single package can bundle multiple artifacts: an agent persona, two skills, and an MCP config, all installed atomically.
+A single package can bundle multiple artifacts: an agent persona, project-level coding conventions, two skills, and an MCP config, all installed atomically.
 
 ### Quick look
 
@@ -53,6 +54,8 @@ A single package can bundle multiple artifacts: an agent persona, two skills, an
   "license": "Apache-2.0",
   "description": "Complete Go development assistant",
   "artifacts": [
+    { "name": "go-expert", "type": "agent", "path": "agents/go-expert.md" },
+    { "name": "go-conventions", "type": "agent-instructions", "path": "instructions/go-conventions.md" },
     { "name": "test-writer", "type": "skill", "path": "skills/test-writer/" },
     { "name": "refactoring", "type": "skill", "path": "skills/refactoring/" },
     { "name": "go-docs", "type": "mcp-server", "path": "mcp/go-docs.json" }
@@ -67,7 +70,7 @@ A single package can bundle multiple artifacts: an agent persona, two skills, an
   "type": "project",
   "require": {
     "@tjespers/golang-expert": "1.0.0",
-    "@alice/code-review": "2.0.0"
+    "@alice/blog-writer": "2.0.0"
   }
 }
 ```
@@ -79,7 +82,7 @@ This repository contains the **aipkg specification**: reference documentation an
 | Area | What it defines |
 |------|-----------------|
 | **Package manifest** | The `aipkg.json` schema for both `project` and `package` manifests |
-| **Artifact types** | Conventions for each artifact type: skill, prompt, command, agent, mcp-server |
+| **Artifact types** | Conventions for each artifact type: skill, agent, agent-instructions, prompt, command, mcp-server |
 | **Naming rules** | Scoped naming (`@scope/name`), reserved namespaces, dot-notation for installed artifacts |
 | **Package archive** | The `.aipkg` format (zip), internal structure |
 | **Source types** | Interface contract for package sources (GitHub, HTTP, and future sources) |
