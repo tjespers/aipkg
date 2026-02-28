@@ -3,7 +3,7 @@
 **Feature Branch**: `001-init-command`
 **Created**: 2026-02-28
 **Status**: Draft
-**Input**: User description: "Package authors and project maintainers need a guided way to create their first aipkg.json manifest. Running aipkg init walks the user through an interactive flow — choosing between project or package type, then prompting for the relevant fields. For projects: an optional name and description. For packages: a scoped name (@scope/name) with validation, version (semver), description, and license. The command generates a valid aipkg.json in the current directory. All prompted fields can also be passed as flags for non-interactive/CI use. If aipkg.json already exists, the command refuses with a clear error message. No network operations, no adapter execution, no artifact scaffolding — artifacts are derived at package time, not during init. This is the first command implemented in the CLI, so it also establishes the foundational patterns all future commands build on: cobra command structure with viper config binding, help/usage system, structured error handling with wrapped errors, and logging."
+**Input**: User description: "Package authors and project maintainers need a guided way to create their first aipkg.json manifest. Running aipkg init walks the user through an interactive flow — choosing between project or package type, then prompting for the relevant fields. For projects: an optional name and description. For packages: a scoped name (@scope/name) with validation, version (semver), description, and license. The command generates a valid aipkg.json in the current directory. All prompted fields can also be passed as flags for non-interactive/CI use. If aipkg.json already exists, the command refuses with a clear error message. No network operations, no adapter execution, no artifact scaffolding — artifacts are derived at package time, not during init. This is the first command implemented in the CLI, so it also establishes the foundational patterns all future commands build on: cobra command structure, help/usage system, structured error handling with wrapped errors, and logging."
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -86,7 +86,7 @@ A user accidentally runs `aipkg init` in a directory that already contains an `a
 - **FR-002**: For package type, the command must prompt in this order: scoped name (required), version (required), description (optional), license (optional).
 - **FR-003**: For project type, the command must prompt for: name (optional) and description (optional).
 - **FR-004**: All user-provided field values must be validated against the `aipkg-spec` manifest JSON schema before the manifest is written.
-- **FR-005**: Validation must cover all schema-enforced constraints for the chosen type, including name format, version format, and license format.
+- **FR-005**: Validation must cover all schema-enforced constraints for the chosen type, including name format and version format. License is accepted as-is (SPDX by convention, not enforced by schema).
 - **FR-006**: The command must generate a valid `aipkg.json` file in the current working directory containing only the fields relevant to the chosen type.
 - **FR-007**: If an `aipkg.json` file already exists in the current directory, the command must refuse to proceed and display a clear error message.
 - **FR-008**: All prompted fields must also be settable via command-line flags for non-interactive use.

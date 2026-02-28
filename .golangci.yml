@@ -47,6 +47,7 @@ linters:
     gosec:
       excludes:
         - G104 # unhandled errors; too noisy early on, errcheck covers the important cases
+        - G115 # integer overflow conversion; false positive for fd casts (uintptr -> int)
 
 formatters:
   enable:

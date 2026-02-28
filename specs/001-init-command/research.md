@@ -2,18 +2,19 @@
 
 **Feature**: 001-init-command | **Date**: 2026-02-28
 
-## CLI Framework: cobra + viper
+## CLI Framework: cobra
 
-**Decision**: Use `github.com/spf13/cobra` for command structure and `github.com/spf13/viper` for config/flag binding.
+**Decision**: Use `github.com/spf13/cobra` for command structure. Flags read via cobra's native `cmd.Flags().GetString()`.
 
-**Rationale**: Already specified in CLAUDE.md as the project's CLI framework. Industry standard for Go CLIs. Provides flag parsing, help generation, usage examples, and subcommand routing out of the box.
+**Rationale**: Industry standard for Go CLIs. Provides flag parsing, help generation, usage examples, and subcommand routing out of the box.
 
 **Alternatives considered**:
 
+- `cobra + viper` — originally planned, but viper's global state model causes flag collisions when multiple commands share flag names, and its dependency tree (afero, fsnotify, mapstructure, go-toml, gotenv, etc.) added ~2 MB for zero value. Removed during implementation.
 - `urfave/cli` — viable but less ecosystem adoption; cobra is the convention for Go CLIs
 - `kong` — declarative style doesn't fit well with dynamic prompt assembly
 
-**Pattern**: Root command in `internal/cli/root.go` with `PersistentPreRunE` for viper initialization. Each subcommand in its own file returning `*cobra.Command`. Entry point in `cmd/aipkg/main.go` calls `cli.NewRootCmd().Execute()`.
+**Pattern**: Root command in `internal/cli/root.go`. Each subcommand in its own file returning `*cobra.Command`. Entry point in `cmd/aipkg/main.go` calls `cli.NewRootCmd().Execute()`.
 
 ## Interactive Prompts: huh
 

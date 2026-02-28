@@ -5,17 +5,17 @@
 
 ## Summary
 
-Implement the `aipkg init` command — the first CLI command that creates `aipkg.json` manifests through an interactive flow or via flags. This also establishes the foundational patterns for all future commands: cobra command structure with viper config binding, interactive prompts with huh, schema-driven validation, structured error handling, and the `internal/` package layout.
+Implement the `aipkg init` command — the first CLI command that creates `aipkg.json` manifests through an interactive flow or via flags. This also establishes the foundational patterns for all future commands: cobra command structure, interactive prompts with huh, schema-driven validation, structured error handling, and the `internal/` package layout.
 
 ## Technical Context
 
 **Language/Version**: Go 1.25.7 (pinned in go.mod)
 **Primary Dependencies**:
 - `github.com/spf13/cobra` — CLI command framework
-- `github.com/spf13/viper` — Config/flag binding
 - `github.com/charmbracelet/huh` — Interactive terminal forms
 - `github.com/santhosh-tekuri/jsonschema/v6` — JSON Schema validation (Draft 2020-12)
 - `github.com/google/licensecheck` — LICENSE file SPDX detection
+- `golang.org/x/term` — TTY detection
 **Storage**: Filesystem only (reads/writes `aipkg.json` in cwd)
 **Testing**: `go test ./...` via `task test`; table-driven tests, filesystem via `os.MkdirTemp`
 **Target Platform**: Cross-platform (linux/darwin/windows amd64/arm64)
@@ -30,13 +30,13 @@ Implement the `aipkg init` command — the first CLI command that creates `aipkg
 
 | Principle | Status | Notes |
 |-----------|--------|-------|
-| I. Simplicity and Deferral | ✅ Pass | Init is the smallest useful first command. No `require`, `repositories`, or `artifacts` fields — those come later. |
+| I. Simplicity and Deferral | ✅ Pass | Init is the smallest useful first command. No `require`, `repositories`, or `artifacts` fields — those come later. Viper removed as unnecessary complexity — cobra flags are sufficient. |
 | II. Core/Adapter Separation | ✅ Pass | Init has zero adapter logic. No tool-specific code. |
 | III. Convention Over Invention | ✅ Pass | Follows `npm init` / `composer init` conventions. Scoped names, semver, SPDX — all standard. |
-| IV. Cold Start First | ✅ Pass | Creates the manifest needed before any other operation. Interactive flow makes first-time easy. |
+| IV. Cold Start First | ✅ Pass | Creates the manifest needed before any other operation. Interactive flow with `@ ` prompt prefix reduces friction — users type `scope/name` without the `@`. |
 | V. Backward-Compatible Evolution | ✅ Pass | First command — no backward compat concerns yet. |
 | Schema validation boundary | ✅ Pass | Field validation uses patterns from the `aipkg-spec` JSON schema. CLI does not invent validation rules. |
-| Error handling | ✅ Pass | Wrapped errors with `fmt.Errorf("context: %w", err)`. Exit 0/1. |
+| Error handling | ✅ Pass | Wrapped errors with `fmt.Errorf("context: %w", err)`. Exit 0/1. Errors printed to stderr via `main.go`. |
 | Testability | ✅ Pass | All packages testable in isolation. Filesystem via temp dirs, prompts bypassed in tests via flag-only mode. |
 | Import discipline | ✅ Pass | Everything in `internal/`. No circular imports. One-way dependency graph. |
 
@@ -61,15 +61,15 @@ specs/001-init-command/
 
 ```text
 cmd/aipkg/
-    main.go                  # Entry point → cli.NewRootCmd().Execute()
+    main.go                  # Entry point → cli.NewRootCmd().Execute(), error printing
 
 internal/
     cli/
-        root.go              # Root cobra command, viper init, version flag
+        root.go              # Root cobra command, version flag
         init.go              # aipkg init command (flags, prompt orchestration, file write)
         init_test.go         # Integration tests for init command
     manifest/
-        manifest.go          # Manifest struct, JSON marshal/unmarshal, field helpers
+        manifest.go          # Manifest struct, JSON marshal with 2-space indent + trailing newline
         manifest_test.go     # Unit tests for manifest serialization
     schema/
         schema.go            # Embedded JSON schema, per-field validation functions
@@ -84,9 +84,13 @@ internal/
 
 ## Key Design Decisions
 
+### No Viper
+
+Originally planned with viper for config/flag binding. Removed during implementation — viper's global state model would cause flag collisions when adding future commands, and its full dependency tree (afero, fsnotify, mapstructure, go-toml, gotenv, etc.) added ~2 MB to the binary for zero value. Cobra's native `cmd.Flags().GetString()` is sufficient.
+
 ### Schema Validation Strategy
 
-The `aipkg-spec` JSON schema will be updated to make `artifacts` optional for package-type manifests (enforced at package/publish time instead). This resolves the previous gap where init-generated manifests would have failed full schema validation.
+The `aipkg-spec` JSON schema was updated to make `artifacts` optional for package-type manifests (enforced at package/publish time instead). This resolves the previous gap where init-generated manifests would have failed full schema validation.
 
 **Decision**: Use per-field validation during interactive prompting (extract name regex, version regex from the compiled schema). Additionally, run full schema validation on the assembled manifest before writing, since init output will now be schema-valid with `artifacts` optional.
 
@@ -104,9 +108,13 @@ Use `huh` forms with per-field validation functions. The form is assembled dynam
 
 This handles all three modes (fully interactive, fully non-interactive, hybrid) with a single code path.
 
+**Name prompt UX**: Interactive name input uses `Prompt("@ ")` so the `@` appears as a fixed prefix. Users type `scope/package-name` without the `@`. The `@` is prepended programmatically before validation and storage. The `--name` flag still accepts the full `@scope/name` format for scripting.
+
 ### Error Output
 
 All errors go to stderr. Confirmation message goes to stdout (FR-018). Warnings (irrelevant flags) go to stderr. This follows Unix convention and allows stdout to be piped/redirected cleanly.
+
+Cobra's `SilenceErrors` and `SilenceUsage` are both true — error printing is handled by `main.go` with `fmt.Fprintln(os.Stderr, "Error:", err)` before `os.Exit(1)`.
 
 ### TTY Detection
 

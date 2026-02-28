@@ -7,7 +7,7 @@
 ```sh
 $ aipkg init
 ? Type: Package
-? Name: @myorg/golang-expert
+? Name: @ myorg/golang-expert
 ? Version (0.1.0): 1.0.0
 ? Description: Expert Go code reviewer and test writer
 ? License (Apache-2.0): Apache-2.0
@@ -31,7 +31,7 @@ Result:
 ```sh
 $ aipkg init
 ? Type: Project
-? Name (@scope/name, optional):
+? Name (optional): @
 ? Description (optional):
 Created aipkg.json (project)
 ```
@@ -86,5 +86,5 @@ Error: invalid name "bad-name": must match @scope/package-name format
 
 # No TTY, missing required fields
 $ echo | aipkg init --type package
-Error: missing required fields: name, version (non-interactive mode)
+Error: missing required flags for package: --name
 ```

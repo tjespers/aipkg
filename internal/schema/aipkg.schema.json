@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aipkg.dev/schema/aipkg.json",
+  "title": "aipkg manifest",
+  "description": "Schema for aipkg.json manifest files (both project and package types).",
+  "type": "object",
+  "required": ["type"],
+  "properties": {
+    "type": {
+      "description": "The role of this manifest.",
+      "enum": ["project", "package"]
+    },
+    "name": {
+      "description": "Scoped package name (@scope/package-name).",
+      "type": "string",
+      "pattern": "^@(?!.*--)[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?/[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$"
+    },
+    "version": {
+      "description": "Package version. Strict semver (MAJOR.MINOR.PATCH).",
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$"
+    },
+    "description": {
+      "description": "Short summary of the package.",
+      "type": "string",
+      "maxLength": 255
+    },
+    "license": {
+      "description": "SPDX license identifier or \"proprietary\".",
+      "type": "string"
+    },
+    "artifacts": {
+      "description": "Artifacts contained in this package.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/artifact"
+      }
+    },
+    "require": {
+      "description": "Dependencies on other packages. Keys are scoped names, values are exact semver versions.",
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^@(?!.*--)[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?/[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$"
+      }
+    },
+    "repositories": {
+      "description": "Package source configurations, checked in order.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/repository"
+      }
+    }
+  },
+  "if": {
+    "properties": { "type": { "const": "package" } },
+    "required": ["type"]
+  },
+  "then": {
+    "required": ["type", "name", "version"]
+  },
+  "else": {
+    "not": {
+      "required": ["artifacts"]
+    }
+  },
+  "$defs": {
+    "artifact": {
+      "type": "object",
+      "required": ["name", "type", "path"],
+      "properties": {
+        "name": {
+          "description": "Artifact name within the package.",
+          "type": "string",
+          "pattern": "^(?!.*--)[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$"
+        },
+        "type": {
+          "description": "Artifact type.",
+          "enum": ["skill", "prompt", "command", "agent", "agent-instructions", "mcp-server"]
+        },
+        "path": {
+          "description": "Relative path to the artifact file or directory.",
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "repository": {
+      "type": "object",
+      "required": ["type", "url"],
+      "properties": {
+        "type": {
+          "description": "Source type.",
+          "enum": ["github", "http"]
+        },
+        "url": {
+          "description": "Source URL or URL pattern.",
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "description": "Restrict to a specific @scope.",
+          "type": "string",
+          "pattern": "^@(?!.*--)[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?$"
+        },
+        "canonical": {
+          "description": "Lock this scope to this source only.",
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

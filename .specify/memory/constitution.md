@@ -181,10 +181,6 @@ issues linked via `Closes: AIPKG-XX` trailer.
 **CI**: GitHub Actions runs lint, test (with `-race` and coverage),
 and build on push/PR to main. Go version is pinned via `go.mod`.
 
-**Commits**: Conventional commits, enforced by pre-commit hook. DCO
-sign-off required (`git commit -s`) for CNCF compliance. Linear
-issues linked via `Closes: AIPKG-XX` trailer.
-
 **Releases**: goreleaser handles cross-platform binary builds and
 distribution.
 

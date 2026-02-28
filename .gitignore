@@ -32,3 +32,7 @@ dist/
 *.swo
 *~
 .claude/settings.local.json
+.claude/scratchpad.txt
+
+# Task runner
+.task/
