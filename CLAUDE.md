@@ -46,3 +46,12 @@ Work is tracked in Linear, team AIPKG, project "CLI".
 - Conventional commits (enforced by pre-commit hook)
 - Use `git commit -s` for DCO sign-off (CNCF requirement)
 - Use `Closes: AIPKG-XX` trailer to link commits to Linear issues
+
+## Active Technologies
+
+- Go 1.25.7 (pinned in go.mod) (001-init-command)
+- Filesystem only (reads/writes `aipkg.json` in cwd) (001-init-command)
+
+## Recent Changes
+
+- 001-init-command: Added Go 1.25.7 (pinned in go.mod)

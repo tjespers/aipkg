@@ -93,7 +93,7 @@ A user accidentally runs `aipkg init` in a directory that already contains an `a
 - **FR-009**: When all required fields are provided via flags, the command must run without any interactive prompts.
 - **FR-010**: When some but not all required fields are provided via flags, the command must prompt interactively only for the missing fields (hybrid mode).
 - **FR-011**: The command must not perform any network operations.
-- **FR-012**: The generated manifest must not include an `artifacts` field — artifacts are derived at package time, not during init.
+- **FR-012**: The generated manifest must not include an `artifacts` field — artifacts are derived at package time, not during init. The `aipkg-spec` schema will be updated to make `artifacts` optional for packages, with presence enforced at package/publish time.
 - **FR-013**: The command must provide clear, actionable validation error messages that explain what is wrong and what format is expected.
 - **FR-014**: The command must provide a `--help` flag that documents all available flags, their defaults, and usage examples.
 - **FR-015**: If the interactive flow is cancelled (e.g., user interrupt), no file must be written and the directory must remain unchanged.
@@ -127,6 +127,7 @@ A user accidentally runs `aipkg init` in a directory that already contains an `a
 - Q: What should happen when type-irrelevant flags are provided (e.g., `--type project --version 1.0.0`)? → A: Warn but proceed — print a warning that the flag is ignored for the chosen type, then continue.
 - Q: Should prompted fields offer default/suggested values? → A: Defaults where sensible — version defaults to `0.1.0`, license defaults to detected LICENSE file or blank, name always requires input.
 - Q: In what order should the package fields be prompted? → A: name → version → description → license (required fields first, then optional).
+- Q: How should we resolve the `artifacts` requirement for package manifests created by init? → A: Update `aipkg-spec` schema to make `artifacts` optional for packages. Enforce presence at package/publish time, not at init time. This allows init-generated manifests to pass full schema validation without including artifacts.
 
 ## Assumptions
 
