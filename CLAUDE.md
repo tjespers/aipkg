@@ -18,6 +18,7 @@ The `aipkg` command-line tool. A package manager for AI artifacts (skills, promp
 ```
 cmd/aipkg/       # main entry point
 internal/        # private packages (not importable by other modules)
+spec/            # specification (manifest schema, naming rules, artifact types)
 ```
 
 No `/pkg` directory. This is a CLI, not a library. Everything is in `internal/`.
@@ -33,9 +34,9 @@ task fmt            # format code
 task tidy           # go mod tidy
 ```
 
-## Spec dependency
+## Specification
 
-The manifest schema, naming rules, and artifact types are defined in `ai-interop/aipkg-spec`. The JSON schemas in that repo are the source of truth for validation.
+The manifest schema, naming rules, and artifact types live in `spec/`. The JSON schemas there are the source of truth for validation. See `spec/CLAUDE.md` for spec-specific context.
 
 ## Project management
 

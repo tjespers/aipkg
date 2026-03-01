@@ -1,4 +1,4 @@
-module github.com/ai-interop/aipkg
+module github.com/tjespers/aipkg
 
 go 1.25.7
 

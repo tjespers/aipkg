@@ -29,12 +29,9 @@ task check          # lint + vet + test (full check)
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the full development setup.
 
-## Related repositories
+## Project structure
 
-| Repository                                             | Purpose                                             |
-| ------------------------------------------------------ | --------------------------------------------------- |
-| [aipkg-spec](https://github.com/ai-interop/aipkg-spec) | Manifest schema, naming rules, artifact conventions |
-| [aipkg](https://github.com/ai-interop/aipkg)           | CLI tool (this repo)                                |
+The specification (manifest schema, naming rules, artifact types) lives in `spec/` alongside the CLI source code. See `spec/README.md` for specification details.
 
 ## Disclaimer
 

@@ -43,10 +43,10 @@ changelog:
       - "^ci:"
       - "^style:"
 
-# TODO: Enable after creating ai-interop/homebrew-tap repo (AIPKG-37)
+# TODO: Enable after creating tjespers/homebrew-tap repo (AIPKG-37)
 # brews:
 #   - repository:
-#       owner: ai-interop
+#       owner: tjespers
 #       name: homebrew-tap
 #     homepage: https://aipkg.dev
 #     description: The unified AI Package Manager
@@ -54,10 +54,10 @@ changelog:
 #     install: |
 #       bin.install "aipkg"
 
-# TODO: Enable after creating ai-interop/scoop-bucket repo (AIPKG-38)
+# TODO: Enable after creating tjespers/scoop-bucket repo (AIPKG-38)
 # scoops:
 #   - repository:
-#       owner: ai-interop
+#       owner: tjespers
 #       name: scoop-bucket
 #     homepage: https://aipkg.dev
 #     description: The unified AI Package Manager

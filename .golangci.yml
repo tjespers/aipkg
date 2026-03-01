@@ -57,7 +57,7 @@ formatters:
   settings:
     goimports:
       local-prefixes:
-        - github.com/ai-interop/aipkg
+        - github.com/tjespers/aipkg
 
 issues:
   max-issues-per-linter: 50

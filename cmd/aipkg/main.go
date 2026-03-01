@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ai-interop/aipkg/internal/cli"
+	"github.com/tjespers/aipkg/internal/cli"
 )
 
 var (

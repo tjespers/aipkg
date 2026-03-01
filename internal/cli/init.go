@@ -9,9 +9,9 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 
-	"github.com/ai-interop/aipkg/internal/license"
-	"github.com/ai-interop/aipkg/internal/manifest"
-	"github.com/ai-interop/aipkg/internal/schema"
+	"github.com/tjespers/aipkg/internal/license"
+	"github.com/tjespers/aipkg/internal/manifest"
+	"github.com/tjespers/aipkg/internal/schema"
 )
 
 func newInitCmd() *cobra.Command {

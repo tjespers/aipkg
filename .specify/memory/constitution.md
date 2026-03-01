@@ -135,8 +135,8 @@ created for v1 MUST remain valid and installable forever.
   and adapters MUST continue to work unchanged.
 - Breaking changes to the manifest schema or CLI behavior require a
   major version bump with a documented migration path.
-- The spec repo (`ai-interop/aipkg-spec`) defines the schema evolution
-  rules. The CLI implements them but does not invent them.
+- The specification (`spec/`) defines the schema evolution rules.
+  The CLI implements them but does not invent them.
 
 **Rationale**: Trust is earned slowly and lost instantly. A package
 manager that breaks existing packages on upgrade will not be trusted.
@@ -202,9 +202,9 @@ guidelines.
   NOT require changes to existing adapters or the core pipeline.
 
 **Schema validation**: Manifest validation uses JSON Schema files from
-the `ai-interop/aipkg-spec` repo. The CLI MUST NOT invent its own
-validation rules — the spec repo is the single source of truth for
-what constitutes a valid manifest.
+`spec/schema/`. The CLI MUST NOT invent its own validation rules. The
+specification is the single source of truth for what constitutes a
+valid manifest.
 
 **Error handling**: Functions that can fail return `error` as the last
 return value. Errors are wrapped with context using `fmt.Errorf` with
@@ -225,11 +225,11 @@ code review finding.
 
 **Authority hierarchy**:
 
-1. The `ai-interop/aipkg-spec` repo is the upstream authority for
-   manifest schema, naming rules, and artifact type definitions. The
-   CLI implements the spec — it does not extend or contradict it.
-2. Brainstorm docs in the spec repo are the source of truth for
-   settled design decisions.
+1. The specification (`spec/`) is the authority for manifest schema,
+   naming rules, and artifact type definitions. The CLI implements the
+   spec. It does not extend or contradict it.
+2. Brainstorm docs in `research/` are the source of truth for settled
+   design decisions.
 3. This constitution governs CLI-specific development principles,
    standards, and architectural boundaries.
 4. Linear (team AIPKG, project "CLI") is the work tracker.
