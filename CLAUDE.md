@@ -47,3 +47,12 @@ Work is tracked in Linear, team AIPKG, project "CLI".
 - Conventional commits (enforced by pre-commit hook)
 - Use `git commit -s` for DCO sign-off (CNCF requirement)
 - Use `Closes: AIPKG-XX` trailer to link commits to Linear issues
+
+## Active Technologies
+
+- Go 1.25 (per go.mod) + cobra (CLI routing), huh/bubbletea (interactive prompts), santhosh-tekuri/jsonschema/v6 (schema validation), google/licensecheck (LICENSE file detection), dlclark/regexp2 (PCRE-style regex for name validation lookaheads), x/term (TTY detection) (001-package-foundation)
+- N/A (local filesystem only, no database) (001-package-foundation)
+
+## Recent Changes
+
+- 001-package-foundation: Added Go 1.25 (per go.mod) + cobra (CLI routing), huh/bubbletea (interactive prompts), santhosh-tekuri/jsonschema/v6 (schema validation), google/licensecheck (LICENSE file detection), dlclark/regexp2 (PCRE-style regex for name validation lookaheads), x/term (TTY detection)
