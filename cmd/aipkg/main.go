@@ -1,6 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+
+	"github.com/tjespers/aipkg/internal/cli"
+)
 
 var (
 	version = "dev"
@@ -9,5 +14,9 @@ var (
 )
 
 func main() {
-	fmt.Printf("aipkg %s (%s, %s)\n", version, commit, date)
+	cli.SetVersionInfo(version, commit, date)
+	if err := cli.Execute(); err != nil {
+		fmt.Fprintln(os.Stderr, "Error:", err)
+		os.Exit(1)
+	}
 }

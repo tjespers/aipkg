@@ -4,6 +4,54 @@ Each artifact in a package has a `type` that determines its format requirements 
 
 aipkg does not invent new artifact formats. Where an established standard exists, we adopt it. Where no standard exists, we keep things minimal and let the content speak for itself.
 
+## Package directory layout
+
+Packages use a convention-based directory structure. Six well-known directories at the package root map to artifact types:
+
+| Directory             | Artifact type        | Structure                 |
+| --------------------- | -------------------- | ------------------------- |
+| `skills/`             | `skill`              | Directory with `SKILL.md` |
+| `prompts/`            | `prompt`             | Single markdown file      |
+| `commands/`           | `command`            | Single markdown file      |
+| `agents/`             | `agent`              | Single markdown file      |
+| `agent-instructions/` | `agent-instructions` | Single markdown file      |
+| `mcp-servers/`        | `mcp-server`         | Single JSON file          |
+
+When you run `aipkg pack`, the CLI scans these directories and generates the `artifacts` array in the manifest. You don't write artifact entries by hand.
+
+### How artifact names are derived
+
+Artifact names come from filenames and directory names within the well-known directories:
+
+- **File-based types** (prompt, command, agent, agent-instructions, mcp-server): the filename without its extension becomes the artifact name. `prompts/code-review.md` produces artifact name `code-review`. `mcp-servers/go-docs.json` produces `go-docs`.
+- **Directory-based types** (skill): the directory name becomes the artifact name. `skills/test-writer/` produces artifact name `test-writer`.
+
+Names must follow the standard naming rules: lowercase alphanumeric and hyphens, 1-64 characters, no consecutive hyphens, can't start or end with a hyphen.
+
+### Example layout
+
+```text
+my-package/
+├── aipkg.json
+├── skills/
+│   ├── test-writer/
+│   │   └── SKILL.md
+│   └── refactoring/
+│       └── SKILL.md
+├── prompts/
+│   └── code-review.md
+├── commands/
+│   └── commit-msg.md
+├── agents/
+│   └── go-expert.md
+├── agent-instructions/
+│   └── go-conventions.md
+└── mcp-servers/
+    └── go-docs.json
+```
+
+Running `aipkg pack` on this layout generates seven artifact entries. You only need to provide `specVersion`, `name`, and `version` in your `aipkg.json`. The tooling handles the rest.
+
 ## Overview
 
 | Type                 | Format        | Structure | Adapter | Standard                                             |
@@ -23,8 +71,10 @@ Skills follow the [Agent Skills specification](https://agentskills.io/specificat
 
 ### Required structure
 
-```
-skill-name/
+Each subdirectory under `skills/` must contain a `SKILL.md` file. Without it, `aipkg pack` will reject the directory.
+
+```text
+skills/test-writer/
 ├── SKILL.md           # Required. Frontmatter + instructions.
 ├── scripts/           # Optional. Executable code the agent can run.
 ├── references/        # Optional. Additional docs loaded on demand.
@@ -71,7 +121,7 @@ This is different from `agent-instructions` (see below). An agent persona says "
 
 ### Format
 
-A single Markdown file. No required frontmatter or sections. Write whatever helps the agent understand its role.
+A single Markdown file under `agents/`. No required frontmatter or sections. Write whatever helps the agent understand its role.
 
 ```markdown
 # Go Expert
@@ -111,7 +161,7 @@ The key difference from `agent` artifacts: agent instructions are **merged** int
 
 ### Format
 
-A single Markdown file. Write project-relevant guidelines, conventions, or rules.
+A single Markdown file under `agent-instructions/`. Write project-relevant guidelines, conventions, or rules.
 
 ```markdown
 ## Go Conventions
@@ -128,7 +178,7 @@ A single Markdown file. Write project-relevant guidelines, conventions, or rules
 Instructions are single files:
 
 ```json
-{ "name": "go-conventions", "type": "agent-instructions", "path": "instructions/go-conventions.md" }
+{ "name": "go-conventions", "type": "agent-instructions", "path": "agent-instructions/go-conventions.md" }
 ```
 
 ### Adapter behavior
@@ -148,7 +198,7 @@ Configuration for [Model Context Protocol](https://modelcontextprotocol.io) serv
 
 ### Format
 
-A JSON file containing the server configuration. Two transport types are supported:
+A single JSON file under `mcp-servers/`. Two transport types are supported:
 
 **stdio** (local command):
 
@@ -181,7 +231,7 @@ Environment variable references use `${VAR_NAME}` syntax. The adapter is respons
 MCP servers are single JSON files:
 
 ```json
-{ "name": "github-api", "type": "mcp-server", "path": "mcp/github.json" }
+{ "name": "github-api", "type": "mcp-server", "path": "mcp-servers/github.json" }
 ```
 
 ### Adapter behavior
@@ -194,7 +244,7 @@ Standalone prompt templates. These are general-purpose text files intended to be
 
 ### Format
 
-A Markdown or plain text file. No required structure. Prompts can be anything from a one-liner to a multi-page document with sections and examples.
+A single Markdown or plain text file under `prompts/`. No required structure. Prompts can be anything from a one-liner to a multi-page document with sections and examples.
 
 ```markdown
 # Code Review
@@ -223,7 +273,7 @@ Slash commands that can be invoked by name in AI tools. Commands are short, focu
 
 ### Format
 
-A Markdown file. Commands can optionally include YAML frontmatter for metadata:
+A single Markdown file under `commands/`. Commands can optionally include YAML frontmatter for metadata:
 
 ```markdown
 ---

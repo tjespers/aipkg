@@ -6,7 +6,7 @@ Every package in the aipkg ecosystem uses scoped names. There are no unscoped pa
 
 A package name always takes the form `@scope/package-name`. The `@` prefix makes package identities visually distinct and unambiguous to parse. The CLI uses it to distinguish package names (`@shiftbase/my-skill`) from source locators (`shiftbase-com/my-skill`).
 
-```
+```text
 @scope/package-name
 │     │
 │     └── The package name within the scope
@@ -37,7 +37,7 @@ Dots are reserved for installed artifact naming (see [dot-notation](#dot-notatio
 
 The complete package name, including the `@` and `/`, is written as a single string:
 
-```
+```text
 @alice/blog-writer
 @tjespers/golang-expert
 @my-org/code-review
@@ -53,7 +53,7 @@ All names are case-insensitive but must be stored and published in lowercase. Th
 
 A valid package name matches:
 
-```
+```text
 ^@(?!.*--)[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?/[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$
 ```
 
@@ -74,7 +74,7 @@ When artifacts are installed, they're placed using **dot-notation**: `scope.arti
 
 This is the adapter's responsibility. The pattern is:
 
-```
+```text
 scope.artifact-name
 ```
 
@@ -82,7 +82,7 @@ scope.artifact-name
 
 Given a package `@shiftbase/golang-expert` with an artifact named `test-writer`:
 
-```
+```text
 Claude Code:  .claude/skills/shiftbase.test-writer/
 Cursor:       .cursor/rules/shiftbase.test-writer.md
 Windsurf:     .windsurf/rules/shiftbase.test-writer.md

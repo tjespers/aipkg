@@ -1,0 +1,7 @@
+{
+  "specVersion": 1,
+  "name": "@alice/blog-writer",
+  "version": "1.0.0",
+  "description": "AI blog writing assistant",
+  "license": "MIT"
+}
