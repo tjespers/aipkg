@@ -31,4 +31,11 @@ dist/
 *.swp
 *.swo
 *~
+
+# Claude settings, scratchpad, research material, and other local files
 .claude/settings.local.json
+.claude/scratchpad.txt
+features/research/
+
+# Task runner
+.task/
