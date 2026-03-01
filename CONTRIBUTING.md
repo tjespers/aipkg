@@ -14,7 +14,7 @@ Thanks for your interest in contributing to aipkg! This document covers everythi
 ### Getting started
 
 ```sh
-git clone https://github.com/ai-interop/aipkg.git
+git clone https://github.com/tjespers/aipkg.git
 cd aipkg
 pre-commit install --hook-type pre-commit --hook-type commit-msg
 task build

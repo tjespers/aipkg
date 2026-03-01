@@ -107,12 +107,6 @@ schema/     JSON Schema files for machine-readable validation
 
 **Phase 1: Foundation.** The manifest schema, artifact types, and naming rules are being specified first. Everything else builds on these.
 
-## Related repositories
-
-| Repository                                              | Purpose  |
-| ------------------------------------------------------- | -------- |
-| [ai-interop/aipkg](https://github.com/ai-interop/aipkg) | CLI tool |
-
 ## License
 
-Apache-2.0. See [LICENSE](LICENSE).
+Apache-2.0. See [LICENSE](../LICENSE).

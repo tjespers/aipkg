@@ -1,6 +1,6 @@
-# CLAUDE.md — aipkg-spec
+# CLAUDE.md — aipkg specification
 
-## What this repo is
+## What this directory is
 
 The aipkg specification. Reference documentation and JSON schemas that define the package format, naming rules, artifact types, and interface contracts for the aipkg ecosystem.
 
@@ -15,16 +15,9 @@ Specs are **reference documentation** (like Composer's schema docs), not formal 
 
 ## Structure
 
-- `docs/` — reference spec documents
-- `schema/` — JSON Schema files for manifest validation, recipe format, etc.
+- Spec documents (`.md`) live directly in this directory
+- `schema/` contains JSON Schema files for manifest validation, recipe format, etc.
 
 ## Project management
 
-Work is tracked in Linear — team AIPKG, project "Specification".
-
-## Cross-repo context
-
-This spec is consumed by multiple repos with different tech stacks:
-
-- `ai-interop/aipkg` — CLI validates manifests against these schemas
-- Future: registry, virtual package repo, docs site
+Work is tracked in Linear, team AIPKG, project "Specification".
