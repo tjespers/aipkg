@@ -11,34 +11,35 @@ Implement the `aipkg init` command — the first CLI command that creates `aipkg
 
 **Language/Version**: Go 1.25.7 (pinned in go.mod)
 **Primary Dependencies**:
+
 - `github.com/spf13/cobra` — CLI command framework
 - `github.com/charmbracelet/huh` — Interactive terminal forms
 - `github.com/santhosh-tekuri/jsonschema/v6` — JSON Schema validation (Draft 2020-12)
 - `github.com/google/licensecheck` — LICENSE file SPDX detection
 - `golang.org/x/term` — TTY detection
-**Storage**: Filesystem only (reads/writes `aipkg.json` in cwd)
-**Testing**: `go test ./...` via `task test`; table-driven tests, filesystem via `os.MkdirTemp`
-**Target Platform**: Cross-platform (linux/darwin/windows amd64/arm64)
-**Project Type**: CLI
-**Performance Goals**: N/A — single-shot command, sub-second execution
-**Constraints**: Offline-only (FR-011), no adapter logic, no artifact scaffolding
-**Scale/Scope**: Single command, 4 new packages in `internal/`
+  **Storage**: Filesystem only (reads/writes `aipkg.json` in cwd)
+  **Testing**: `go test ./...` via `task test`; table-driven tests, filesystem via `os.MkdirTemp`
+  **Target Platform**: Cross-platform (linux/darwin/windows amd64/arm64)
+  **Project Type**: CLI
+  **Performance Goals**: N/A — single-shot command, sub-second execution
+  **Constraints**: Offline-only (FR-011), no adapter logic, no artifact scaffolding
+  **Scale/Scope**: Single command, 4 new packages in `internal/`
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-| Principle | Status | Notes |
-|-----------|--------|-------|
-| I. Simplicity and Deferral | ✅ Pass | Init is the smallest useful first command. No `require`, `repositories`, or `artifacts` fields — those come later. Viper removed as unnecessary complexity — cobra flags are sufficient. |
-| II. Core/Adapter Separation | ✅ Pass | Init has zero adapter logic. No tool-specific code. |
-| III. Convention Over Invention | ✅ Pass | Follows `npm init` / `composer init` conventions. Scoped names, semver, SPDX — all standard. |
-| IV. Cold Start First | ✅ Pass | Creates the manifest needed before any other operation. Interactive flow with `@ ` prompt prefix reduces friction — users type `scope/name` without the `@`. |
-| V. Backward-Compatible Evolution | ✅ Pass | First command — no backward compat concerns yet. |
-| Schema validation boundary | ✅ Pass | Field validation uses patterns from the `aipkg-spec` JSON schema. CLI does not invent validation rules. |
-| Error handling | ✅ Pass | Wrapped errors with `fmt.Errorf("context: %w", err)`. Exit 0/1. Errors printed to stderr via `main.go`. |
-| Testability | ✅ Pass | All packages testable in isolation. Filesystem via temp dirs, prompts bypassed in tests via flag-only mode. |
-| Import discipline | ✅ Pass | Everything in `internal/`. No circular imports. One-way dependency graph. |
+| Principle                        | Status  | Notes                                                                                                                                                                                    |
+| -------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| I. Simplicity and Deferral       | ✅ Pass | Init is the smallest useful first command. No `require`, `repositories`, or `artifacts` fields — those come later. Viper removed as unnecessary complexity — cobra flags are sufficient. |
+| II. Core/Adapter Separation      | ✅ Pass | Init has zero adapter logic. No tool-specific code.                                                                                                                                      |
+| III. Convention Over Invention   | ✅ Pass | Follows `npm init` / `composer init` conventions. Scoped names, semver, SPDX — all standard.                                                                                             |
+| IV. Cold Start First             | ✅ Pass | Creates the manifest needed before any other operation. Interactive flow with `@ ` prompt prefix reduces friction — users type `scope/name` without the `@`.                             |
+| V. Backward-Compatible Evolution | ✅ Pass | First command — no backward compat concerns yet.                                                                                                                                         |
+| Schema validation boundary       | ✅ Pass | Field validation uses patterns from the `aipkg-spec` JSON schema. CLI does not invent validation rules.                                                                                  |
+| Error handling                   | ✅ Pass | Wrapped errors with `fmt.Errorf("context: %w", err)`. Exit 0/1. Errors printed to stderr via `main.go`.                                                                                  |
+| Testability                      | ✅ Pass | All packages testable in isolation. Filesystem via temp dirs, prompts bypassed in tests via flag-only mode.                                                                              |
+| Import discipline                | ✅ Pass | Everything in `internal/`. No circular imports. One-way dependency graph.                                                                                                                |
 
 No violations. Complexity tracking not needed.
 
@@ -101,10 +102,10 @@ The `aipkg-spec` JSON schema was updated to make `artifacts` optional for packag
 Use `huh` forms with per-field validation functions. The form is assembled dynamically based on the manifest type and which flags are already provided:
 
 1. If `--type` not provided → prompt for type selection
-2. Based on type, build field list → subtract fields already provided via flags
-3. Assemble huh form with remaining fields → each field gets a schema-derived validator
-4. Run form → collect values → merge with flag values
-5. Build manifest struct → serialize to JSON → write file
+1. Based on type, build field list → subtract fields already provided via flags
+1. Assemble huh form with remaining fields → each field gets a schema-derived validator
+1. Run form → collect values → merge with flag values
+1. Build manifest struct → serialize to JSON → write file
 
 This handles all three modes (fully interactive, fully non-interactive, hybrid) with a single code path.
 

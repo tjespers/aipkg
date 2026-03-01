@@ -10,13 +10,13 @@ The central entity produced by `aipkg init`. Represents a single `aipkg.json` fi
 
 **Fields** (init-relevant subset — full schema in `aipkg-spec`):
 
-| Field | Go Type | Project | Package | Validation |
-| ----- | ------- | ------- | ------- | ---------- |
-| `type` | `string` | required | required | Enum: `"project"`, `"package"` |
-| `name` | `string` | optional | required | Schema regex: `^@(?!.*--)[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?/[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$` |
-| `version` | `string` | omitted | required | Schema regex: `^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$` |
-| `description` | `string` | optional | optional | Max 255 characters |
-| `license` | `string` | omitted | optional | Free-form string (SPDX by convention) |
+| Field         | Go Type  | Project  | Package  | Validation                                                                                       |
+| ------------- | -------- | -------- | -------- | ------------------------------------------------------------------------------------------------ |
+| `type`        | `string` | required | required | Enum: `"project"`, `"package"`                                                                   |
+| `name`        | `string` | optional | required | Schema regex: `^@(?!.*--)[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?/[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$` |
+| `version`     | `string` | omitted  | required | Schema regex: \`^(0                                                                              |
+| `description` | `string` | optional | optional | Max 255 characters                                                                               |
+| `license`     | `string` | omitted  | optional | Free-form string (SPDX by convention)                                                            |
 
 **Go struct**:
 
@@ -52,11 +52,11 @@ Init only creates. No update, delete, or read operations.
 
 All validation derives from the `aipkg-spec` JSON schema (`schema/aipkg.schema.json`). The init command exposes per-field validators for use in interactive prompts:
 
-| Validator | Input | Returns error when |
-| --------- | ----- | ------------------ |
-| `ValidateName` | string | Does not match schema name pattern |
-| `ValidateVersion` | string | Does not match schema version pattern |
-| `ValidateDescription` | string | Exceeds 255 characters |
+| Validator             | Input  | Returns error when                    |
+| --------------------- | ------ | ------------------------------------- |
+| `ValidateName`        | string | Does not match schema name pattern    |
+| `ValidateVersion`     | string | Does not match schema version pattern |
+| `ValidateDescription` | string | Exceeds 255 characters                |
 
 License has no schema-enforced format constraint — any non-empty string is accepted.
 

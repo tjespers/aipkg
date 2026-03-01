@@ -18,7 +18,7 @@
 - [x] T001 Copy manifest schema from `../aipkg-spec/schema/aipkg.json` to `internal/schema/aipkg.schema.json`
 - [x] T002 Add Go dependencies: `go get github.com/spf13/cobra github.com/charmbracelet/huh github.com/santhosh-tekuri/jsonschema/v6 github.com/google/licensecheck golang.org/x/term`
 
----
+______________________________________________________________________
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
@@ -37,7 +37,7 @@
 
 **Checkpoint**: Foundation ready — all packages tested, root command works, `aipkg --version` functional
 
----
+______________________________________________________________________
 
 ## Phase 3: User Story 1 + User Story 4 — Package Interactive + Overwrite Guard (Priority: P1) MVP
 
@@ -54,7 +54,7 @@
 
 **Checkpoint**: `aipkg init` creates package manifests interactively, refuses on existing file, handles Ctrl+C
 
----
+______________________________________________________________________
 
 ## Phase 4: User Story 2 — Project Interactive (Priority: P2)
 
@@ -68,7 +68,7 @@
 
 **Checkpoint**: Both package and project interactive flows work independently
 
----
+______________________________________________________________________
 
 ## Phase 5: User Story 3 — Non-Interactive & Hybrid Mode (Priority: P3)
 
@@ -83,7 +83,7 @@
 
 **Checkpoint**: All three modes work: fully interactive, fully non-interactive, hybrid. TTY detection correct.
 
----
+______________________________________________________________________
 
 ## Phase 6: Polish & Cross-Cutting Concerns
 
@@ -93,7 +93,7 @@
 - [x] T019 Write integration tests for init command in `internal/cli/init_test.go` — table-driven tests using `os.MkdirTemp`: package creation via flags (all fields, required only, default version), project creation via flags (minimal, with optional fields), overwrite guard, invalid name/version validation errors, non-interactive missing fields error, irrelevant flag warnings, omitempty behavior for skipped optional fields, consecutive hyphens in name, JSON formatting (2-space indent, trailing newline)
 - [x] T020 Run `task check` (lint + vet + test) and validate all quickstart.md scenarios manually
 
----
+______________________________________________________________________
 
 ## Dependencies & Execution Order
 
@@ -119,27 +119,27 @@
 - Phase 2: T003, T004, T005 can run in parallel (3 implementation files); then T006, T007, T008 can run in parallel (3 test files, after their implementations)
 - Phase 6: T018 and T019 can run in parallel (different concerns in different files)
 
----
+______________________________________________________________________
 
 ## Implementation Strategy
 
 ### MVP First (User Story 1 + 4 Only)
 
 1. Complete Phase 1: Setup
-2. Complete Phase 2: Foundational (CRITICAL — blocks all stories)
-3. Complete Phase 3: US1 + US4 (package interactive + overwrite guard)
-4. **STOP and VALIDATE**: `aipkg init` creates package manifests, refuses on existing file
-5. This is a usable MVP — package authors can create manifests
+1. Complete Phase 2: Foundational (CRITICAL — blocks all stories)
+1. Complete Phase 3: US1 + US4 (package interactive + overwrite guard)
+1. **STOP and VALIDATE**: `aipkg init` creates package manifests, refuses on existing file
+1. This is a usable MVP — package authors can create manifests
 
 ### Incremental Delivery
 
 1. Setup + Foundational -> Foundation ready
-2. US1 + US4 -> Package interactive works -> **MVP!**
-3. US2 -> Project interactive works -> Both types supported
-4. US3 -> Non-interactive + hybrid -> CI/scripting ready
-5. Polish -> Help text, integration tests, full validation
+1. US1 + US4 -> Package interactive works -> **MVP!**
+1. US2 -> Project interactive works -> Both types supported
+1. US3 -> Non-interactive + hybrid -> CI/scripting ready
+1. Polish -> Help text, integration tests, full validation
 
----
+______________________________________________________________________
 
 ## Notes
 

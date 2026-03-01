@@ -18,10 +18,10 @@ A package author wants to publish a set of AI artifacts (skills, prompts, etc.) 
 **Acceptance Scenarios**:
 
 1. **Given** an empty directory with no `aipkg.json`, **When** user runs `aipkg init` and selects "package" and provides name `@myorg/cool-skill`, version `1.0.0`, description `"A cool skill"`, and license `Apache-2.0`, **Then** a valid `aipkg.json` is created with `type: "package"` and all provided fields.
-2. **Given** user enters a name that does not pass schema validation (e.g., `cool-skill`), **When** the name is submitted, **Then** the command shows a validation error and re-prompts for a valid name.
-3. **Given** user enters a version that does not pass schema validation (e.g., `1.0`), **When** the version is submitted, **Then** the command shows a validation error and re-prompts for a valid version.
+1. **Given** user enters a name that does not pass schema validation (e.g., `cool-skill`), **When** the name is submitted, **Then** the command shows a validation error and re-prompts for a valid name.
+1. **Given** user enters a version that does not pass schema validation (e.g., `1.0`), **When** the version is submitted, **Then** the command shows a validation error and re-prompts for a valid version.
 
----
+______________________________________________________________________
 
 ### User Story 2 - Project Maintainer Creates Manifest Interactively (Priority: P2)
 
@@ -34,10 +34,10 @@ A project maintainer wants to consume aipkg packages in their project. They run 
 **Acceptance Scenarios**:
 
 1. **Given** an empty directory, **When** user runs `aipkg init`, selects "project", and skips all optional prompts, **Then** a valid `aipkg.json` is created containing only `{ "type": "project" }`.
-2. **Given** an empty directory, **When** user runs `aipkg init`, selects "project", and provides name `@myteam/my-project` and description `"My AI project"`, **Then** a valid `aipkg.json` is created with all three fields.
-3. **Given** user provides a project name, **When** the name is submitted, **Then** it is validated against the manifest JSON schema.
+1. **Given** an empty directory, **When** user runs `aipkg init`, selects "project", and provides name `@myteam/my-project` and description `"My AI project"`, **Then** a valid `aipkg.json` is created with all three fields.
+1. **Given** user provides a project name, **When** the name is submitted, **Then** it is validated against the manifest JSON schema.
 
----
+______________________________________________________________________
 
 ### User Story 3 - Non-Interactive Manifest Creation via Flags (Priority: P3)
 
@@ -50,10 +50,10 @@ A CI pipeline or automation script needs to create an `aipkg.json` without inter
 **Acceptance Scenarios**:
 
 1. **Given** an empty directory, **When** user runs `aipkg init --type package --name @myorg/my-tool --version 0.1.0`, **Then** a valid `aipkg.json` is created without any interactive prompts.
-2. **Given** flags provide some but not all required values for a package (e.g., `--type package --name @myorg/my-tool` without `--version`), **When** running in a terminal, **Then** the command prompts interactively only for the missing required fields.
-3. **Given** flags provide values that do not pass schema validation (e.g., `--name bad-name`), **When** the command runs, **Then** it exits with a validation error and does not create a file.
+1. **Given** flags provide some but not all required values for a package (e.g., `--type package --name @myorg/my-tool` without `--version`), **When** running in a terminal, **Then** the command prompts interactively only for the missing required fields.
+1. **Given** flags provide values that do not pass schema validation (e.g., `--name bad-name`), **When** the command runs, **Then** it exits with a validation error and does not create a file.
 
----
+______________________________________________________________________
 
 ### User Story 4 - Prevent Overwriting Existing Manifest (Priority: P1)
 
@@ -66,9 +66,9 @@ A user accidentally runs `aipkg init` in a directory that already contains an `a
 **Acceptance Scenarios**:
 
 1. **Given** a directory containing an existing `aipkg.json`, **When** user runs `aipkg init`, **Then** the command exits with an error message indicating the file already exists and no changes are made.
-2. **Given** a directory containing an existing `aipkg.json`, **When** user runs `aipkg init` with flags, **Then** the same guard applies — the command refuses regardless of flags.
+1. **Given** a directory containing an existing `aipkg.json`, **When** user runs `aipkg init` with flags, **Then** the same guard applies — the command refuses regardless of flags.
 
----
+______________________________________________________________________
 
 ### Edge Cases
 
