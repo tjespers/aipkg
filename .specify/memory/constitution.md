@@ -1,22 +1,23 @@
 <!--
 Sync Impact Report
 ==================
-Version change: (new) → 1.0.0
-Modified principles: N/A (initial constitution)
+Version change: 1.0.0 → 1.1.0
+Modified principles: none
 Added sections:
-  - Core Principles (5): Simplicity and Deferral, Core/Adapter Separation,
-    Convention Over Invention, Cold Start First, Backward-Compatible Evolution
-  - Development Standards
-  - Architectural Boundaries
-  - Governance
-Removed sections: N/A
+  - Development Standards > User-facing documentation
+Removed sections: none
 Templates requiring updates:
   - .specify/templates/plan-template.md — ✅ no update needed
-    (Constitution Check section is already a dynamic placeholder)
+    (Constitution Check is a dynamic placeholder; will pick up new standard)
   - .specify/templates/spec-template.md — ✅ no update needed
     (no constitution-specific references)
-  - .specify/templates/tasks-template.md — ✅ no update needed
-    (task phases are generic, no principle-specific coupling)
+  - .specify/templates/tasks-template.md — ⚠ advisory
+    (Phase N "Polish" lists docs as a polish task; the new standard says
+    docs ship WITH the feature, not after. Task generation via
+    /speckit.tasks should place doc tasks inside the relevant user-story
+    phase, not defer them to polish. No template edit needed because the
+    sample tasks are illustrative and /speckit.tasks reads the constitution
+    at generation time.)
   - .specify/templates/commands/*.md — ✅ no files present
 Follow-up TODOs: none
 -->
@@ -186,6 +187,23 @@ distribution.
 
 **License**: Apache-2.0. All contributions MUST be license-compatible.
 
+**User-facing documentation**: Every CLI command and specification
+change that ships to users MUST include corresponding reference
+documentation. This covers usage instructions, examples, and common
+workflows. Documentation is a deliverable, not a follow-up task.
+
+- New commands MUST ship with a reference page covering synopsis,
+  flags, examples, and at least one end-to-end workflow.
+- Specification changes (manifest fields, naming rules, artifact
+  types) MUST update the relevant reference docs in `spec/` so that
+  published documentation stays in sync with the schema.
+- Documentation tasks belong in the same implementation phase as the
+  feature they describe. They MUST NOT be deferred to a polish or
+  post-release phase.
+- Internal developer documentation (code comments, architecture
+  notes, inline godoc) is out of scope for this standard. Existing
+  quality and review practices cover those.
+
 ## Architectural Boundaries
 
 These are structural constraints on the codebase, not aspirational
@@ -278,4 +296,4 @@ these principles. The constitution is a living document — if a
 principle consistently creates friction, that is signal to amend it,
 not ignore it.
 
-**Version**: 1.0.0 | **Ratified**: 2026-02-27 | **Last Amended**: 2026-02-27
+**Version**: 1.1.0 | **Ratified**: 2026-02-27 | **Last Amended**: 2026-03-01
