@@ -50,7 +50,10 @@ Work is tracked in Linear, team AIPKG, project "CLI".
 
 ## Active Technologies
 
+- Go 1.25 (per go.mod) + cobra (CLI routing), gopkg.in/yaml.v3 (SKILL.md frontmatter), sabhiram/go-gitignore (.aipkgignore patterns), santhosh-tekuri/jsonschema/v6 (manifest schema validation). Archive and SHA-256 via stdlib (`archive/zip`, `crypto/sha256`). (002-archive-format-pack)
+
 - Go 1.25 (per go.mod) + cobra (CLI routing), huh/bubbletea (interactive prompts), santhosh-tekuri/jsonschema/v6 (schema validation), google/licensecheck (LICENSE file detection), dlclark/regexp2 (PCRE-style regex for name validation lookaheads), x/term (TTY detection) (001-package-foundation)
+
 - N/A (local filesystem only, no database) (001-package-foundation)
 
 ## Recent Changes
