@@ -105,12 +105,21 @@ func runCreate(cmd *cobra.Command, opts *createOptions) error {
 	}
 
 	// Detect license from existing LICENSE file.
+	// Check target directory first, then fall back to cwd (covers the common
+	// case of creating a new subdirectory inside a repo that has a LICENSE).
 	detectedLicense := ""
-	if targetDir != "" && needLicense {
-		if id, ok := license.Detect(targetDir); ok {
-			detectedLicense = id
-			opts.license = id
+	if needLicense {
+		if targetDir != "" {
+			if id, ok := license.Detect(targetDir); ok {
+				detectedLicense = id
+			}
 		}
+		if detectedLicense == "" {
+			if id, ok := license.Detect("."); ok {
+				detectedLicense = id
+			}
+		}
+		opts.license = detectedLicense
 	}
 
 	// Build and run interactive prompts for missing fields.
