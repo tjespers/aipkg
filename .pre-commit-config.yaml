@@ -16,7 +16,7 @@ repos:
       - id: mdformat
         additional_dependencies:
           - mdformat-gfm
-        exclude: '^(\.claude/|\.specify/)'
+        exclude: '^(\.claude/|\.specify/|features/)'
 
   - repo: local
     hooks:
