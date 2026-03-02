@@ -58,4 +58,6 @@ Work is tracked in Linear, team AIPKG, project "CLI".
 
 ## Recent Changes
 
+- 002-archive-format-pack: Added `aipkg pack` command. New packages: internal/archive (zip creation, SHA-256 sidecar), internal/artifact (discovery, validation, type system), internal/frontmatter (YAML extraction), internal/ignore (.aipkgignore support). New deps: gopkg.in/yaml.v3, sabhiram/go-gitignore. Spec docs: spec/archive.md, updated spec/artifacts.md.
+
 - 001-package-foundation: Added Go 1.25 (per go.mod) + cobra (CLI routing), huh/bubbletea (interactive prompts), santhosh-tekuri/jsonschema/v6 (schema validation), google/licensecheck (LICENSE file detection), dlclark/regexp2 (PCRE-style regex for name validation lookaheads), x/term (TTY detection)

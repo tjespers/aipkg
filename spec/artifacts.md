@@ -28,6 +28,22 @@ Artifact names come from filenames and directory names within the well-known dir
 
 Names must follow the standard naming rules: lowercase alphanumeric and hyphens, 1-64 characters, no consecutive hyphens, can't start or end with a hyphen.
 
+### File extensions
+
+The well-known directory determines the artifact type, not the file extension. File-based artifact types are not restricted to `.md`. Extensions like `.txt`, `.prompt`, `.prompt.md`, and `.json` (for mcp-servers) are all valid. Authors are free to use whatever extension convention they prefer.
+
+Recommended conventions:
+
+| Type                 | Recommended extension | Other valid extensions          |
+| -------------------- | --------------------- | ------------------------------- |
+| `prompt`             | `.md`                 | `.txt`, `.prompt.md`            |
+| `command`            | `.md`                 | `.txt`, `.command.md`           |
+| `agent`              | `.md`                 | `.txt`, `.agent.md`             |
+| `agent-instructions` | `.md`                 | `.txt`, `.instructions.md`      |
+| `mcp-server`         | `.json`               | (must be valid JSON regardless) |
+
+MCP server files must parse as valid JSON regardless of extension.
+
 ### Example layout
 
 ```text
