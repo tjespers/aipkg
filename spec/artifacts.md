@@ -11,10 +11,10 @@ Packages use a convention-based directory structure. Six well-known directories 
 | Directory             | Artifact type        | Structure                 |
 | --------------------- | -------------------- | ------------------------- |
 | `skills/`             | `skill`              | Directory with `SKILL.md` |
-| `prompts/`            | `prompt`             | Single markdown file      |
-| `commands/`           | `command`            | Single markdown file      |
-| `agents/`             | `agent`              | Single markdown file      |
-| `agent-instructions/` | `agent-instructions` | Single markdown file      |
+| `prompts/`            | `prompt`             | Single file               |
+| `commands/`           | `command`            | Single file               |
+| `agents/`             | `agent`              | Single file               |
+| `agent-instructions/` | `agent-instructions` | Single file               |
 | `mcp-servers/`        | `mcp-server`         | Single JSON file          |
 
 When you run `aipkg pack`, the CLI scans these directories and generates the `artifacts` array in the manifest. You don't write artifact entries by hand.
@@ -23,7 +23,7 @@ When you run `aipkg pack`, the CLI scans these directories and generates the `ar
 
 Artifact names come from filenames and directory names within the well-known directories:
 
-- **File-based types** (prompt, command, agent, agent-instructions, mcp-server): the filename without its extension becomes the artifact name. `prompts/code-review.md` produces artifact name `code-review`. `mcp-servers/go-docs.json` produces `go-docs`.
+- **File-based types** (prompt, command, agent, agent-instructions, mcp-server): the artifact name is derived by stripping everything from the first `.` onwards. `prompts/code-review.md` produces artifact name `code-review`. `mcp-servers/go-docs.json` produces `go-docs`. For compound extensions like `code-review.prompt.md`, this produces `code-review` (not `code-review.prompt`).
 - **Directory-based types** (skill): the directory name becomes the artifact name. `skills/test-writer/` produces artifact name `test-writer`.
 
 Names must follow the standard naming rules: lowercase alphanumeric and hyphens, 1-64 characters, no consecutive hyphens, can't start or end with a hyphen.
