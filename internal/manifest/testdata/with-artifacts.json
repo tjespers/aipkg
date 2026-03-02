@@ -1,0 +1,17 @@
+{
+  "specVersion": 1,
+  "name": "@alice/blog-writer",
+  "version": "1.0.0",
+  "artifacts": [
+    {
+      "name": "test-writer",
+      "type": "skill",
+      "path": "skills/test-writer/"
+    },
+    {
+      "name": "code-review",
+      "type": "prompt",
+      "path": "prompts/code-review.md"
+    }
+  ]
+}

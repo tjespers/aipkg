@@ -29,6 +29,7 @@ func newRootCmd() *cobra.Command {
 	}
 
 	cmd.AddCommand(newCreateCmd())
+	cmd.AddCommand(newPackCmd())
 
 	return cmd
 }
