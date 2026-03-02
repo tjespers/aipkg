@@ -79,36 +79,36 @@ A package author wants the archive written to a specific location, such as a `di
 
 **Archive format specification:**
 
-- **FR-001**: The specification MUST define the archive format as a zip file with `.aipkg` extension.
-- **FR-002**: The specification MUST define that archives contain a single top-level directory holding the manifest and all artifact files and directories.
-- **FR-003**: The specification MUST define the filename convention as `{scope}--{name}-{version}.aipkg`, where the `@` prefix is stripped and the `/` is replaced with `--` (double dash). Because both scope and package name forbid consecutive hyphens, the `--` separator is unambiguous: scope, name, and version are fully reconstructible from the filename alone (e.g., `@tjespers/dummy` v1.2.3 produces `tjespers--dummy-1.2.3.aipkg`). The manifest inside remains authoritative for package identity.
+- **FR-001**: The specification MUST define the archive format as a zip file with `.aipkg` extension, using deflate compression and UTF-8 filename encoding within the archive.
+- **FR-002**: The specification MUST define that archives contain a single top-level directory holding the manifest and all artifact files and directories. Only the manifest and artifact content is included; non-artifact files at the package root (e.g., README.md, LICENSE) are not part of the archive in v1.
+- **FR-003**: The specification MUST define the filename convention as `{scope}--{name}-{version}.aipkg`, where the `@` prefix is stripped and the `/` is replaced with `--` (double dash). Because both scope and package name forbid consecutive hyphens, the `--` separator is unambiguous. Because versions are strict semver (MAJOR.MINOR.PATCH, no pre-release or build metadata), the version contains dots but no hyphens, so `{name}-{version}` splits unambiguously at the last hyphen preceding a digit-dot sequence. Scope, name, and version are fully reconstructible from the filename alone (e.g., `@tjespers/dummy` v1.2.3 produces `tjespers--dummy-1.2.3.aipkg`). The specification reference document MUST include the parsing algorithm. The manifest inside remains authoritative for package identity.
 - **FR-004**: The specification MUST define that the top-level directory inside the archive is named after the `name` portion of the manifest (the part after `/`, without scope or version). For `@tjespers/dummy` v1.2.3, the top-level directory is `dummy/`. This follows Helm's convention where the chart archive's top-level directory matches the chart name.
 - **FR-005**: The specification MUST define extraction behavior: the CLI strips the top-level directory when extracting, placing contents directly into the target location.
-- **FR-006**: The specification MUST define integrity verification via SHA-256 sidecar files using `sha256sum` format (hash followed by two spaces and filename).
+- **FR-006**: The specification MUST define integrity verification via SHA-256 sidecar files using `sha256sum` format (lowercase hex hash, two spaces, archive basename). The sidecar file MUST use UTF-8 encoding with a LF line ending, terminated by a single newline.
 
 **Pack command:**
 
 - **FR-007**: The system MUST provide a `pack` command that creates a `.aipkg` archive from the current directory (or a specified source directory).
-- **FR-008**: The pack command MUST discover artifacts by scanning the six well-known directories (`skills/`, `prompts/`, `commands/`, `agents/`, `agent-instructions/`, `mcp-servers/`).
+- **FR-008**: The pack command MUST discover artifacts by scanning the six well-known directories (`skills/`, `prompts/`, `commands/`, `agents/`, `agent-instructions/`, `mcp-servers/`). Discovery MUST only consider top-level entries within each well-known directory: regular files for file-based types, direct subdirectories for directory-based types (skills). Hidden entries (names starting with `.`) MUST be silently skipped. Symlinks and other non-regular filesystem entries MUST be silently skipped. Nested subdirectories within file-based type directories (e.g., `prompts/drafts/review.md`) MUST NOT be discovered.
 - **FR-009**: The pack command MUST generate the `artifacts` array from discovered artifacts and write a copy of the manifest with this array into the archive. The generated array replaces any existing `artifacts` field in the archived copy. The original `aipkg.json` on disk MUST NOT be modified. This ensures the pack command is atomic and idempotent.
-- **FR-010**: The pack command MUST validate the manifest against the package JSON schema before packing. If validation fails, the command MUST refuse to pack.
+- **FR-010**: The pack command MUST validate the manifest against the package JSON schema before packing. If validation fails, the command MUST refuse to pack and MUST NOT proceed to artifact discovery. Manifest validation errors are reported immediately without collecting further errors.
 - **FR-011**: If no artifacts are discovered in any well-known directory (after applying ignore rules), the pack command MUST exit with an error.
 
 **Type-specific artifact validation:**
 
-- **FR-012**: Skill directories MUST contain a `SKILL.md` file. Without it, the pack command MUST reject the directory.
+- **FR-012**: Skill directories MUST contain a `SKILL.md` file. Without it, the pack command MUST reject the directory. The entire skill directory is included in the archive (including optional subdirectories like `scripts/`, `references/`, and `assets/` as defined by the Agent Skills specification).
 - **FR-013**: The `SKILL.md` file MUST contain valid YAML frontmatter enclosed in `---` delimiters.
 - **FR-014**: The `SKILL.md` frontmatter MUST include `name` (kebab-case, 1-64 characters, no leading/trailing/consecutive hyphens) and `description` (1-1024 characters). Both fields are required.
 - **FR-015**: The `SKILL.md` frontmatter MUST only contain allowed keys: `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools`. Unexpected keys MUST cause a validation error.
 - **FR-016**: The `name` field in `SKILL.md` frontmatter MUST match the parent directory name. A mismatch MUST cause a validation error.
 - **FR-017**: MCP server config files MUST be valid JSON. The pack command validates that the file parses as JSON but does not validate the JSON structure beyond that.
 - **FR-018**: File-based artifact types (prompts, commands, agents, agent-instructions) MUST be non-empty (file size greater than zero bytes). The file extension does not determine the artifact type; the well-known directory determines type. Files are not restricted to `.md`. Extensions like `.txt`, `.prompt`, and `.prompt.md` are equally valid. Recommended extensions: `.md` for most artifact types, but authors are free to use whatever convention they prefer.
-- **FR-019**: Artifact names MUST follow the standard naming rules: lowercase alphanumeric and hyphens, 1-64 characters, no consecutive hyphens, cannot start or end with a hyphen. For file-based artifacts, the name is derived by stripping everything from the first `.` onwards (e.g., `code-review.prompt.md` → `code-review`, `my-prompt.txt` → `my-prompt`). For directory-based artifacts (skills), the directory name is the artifact name.
+- **FR-019**: Artifact names MUST follow the standard naming rules: lowercase alphanumeric and hyphens, 1-64 characters, no consecutive hyphens, cannot start or end with a hyphen. For file-based artifacts, the name is derived by stripping everything from the first `.` onwards (e.g., `code-review.prompt.md` → `code-review`, `my-prompt.txt` → `my-prompt`). If a filename contains no `.`, the entire filename is the artifact name. For directory-based artifacts (skills), the directory name is the artifact name.
 - **FR-020**: If any artifact fails validation, the pack command MUST refuse to produce an archive and MUST report all validation errors (not just the first one).
 
 **Archive creation:**
 
-- **FR-021**: The archive MUST contain a single top-level directory named after the `name` portion of the manifest (the part after `/`). Consumers can rely on this for predictable extraction.
+- **FR-021**: The archive MUST satisfy the top-level directory structure defined in FR-004. Consumers can rely on this for predictable extraction.
 - **FR-022**: The pack command MUST generate a `.sha256` sidecar file alongside the archive, containing the SHA-256 hash of the archive in `sha256sum` format.
 - **FR-023**: The default output filename MUST follow the convention defined in FR-003: `{scope}--{name}-{version}.aipkg`.
 - **FR-024**: The pack command MUST support an `--output` flag for specifying a custom output path (file or directory).
@@ -117,7 +117,7 @@ A package author wants the archive written to a specific location, such as a `di
 **File exclusion:**
 
 - **FR-026**: The pack command MUST support `.aipkgignore` files using gitignore-style pattern syntax.
-- **FR-027**: Built-in defaults MUST always exclude `.git/`, `.aipkgignore`, and the output archive itself, regardless of `.aipkgignore` contents.
+- **FR-027**: Built-in defaults MUST always exclude `.git/`, `.aipkgignore`, and the output archive itself, regardless of `.aipkgignore` contents. Conversely, the `aipkg.json` manifest MUST always be included in the archive and cannot be excluded by `.aipkgignore`.
 - **FR-028**: Author-defined `.aipkgignore` patterns take precedence over convention-based directory discovery. If a pattern excludes an artifact file or directory, it is omitted from the archive and the `artifacts` array.
 
 ### Key Entities
