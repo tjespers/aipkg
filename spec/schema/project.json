@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aipkg.dev/schema/project.json",
+  "title": "aipkg project file",
+  "description": "Schema for aipkg-project.json project files.",
+  "type": "object",
+  "required": ["specVersion", "require"],
+  "properties": {
+    "specVersion": {
+      "description": "Project file specification version.",
+      "type": "integer",
+      "const": 1
+    },
+    "require": {
+      "description": "Dependencies on packages. Keys are scoped names, values are semver versions with optional pre-release identifiers.",
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^@(?!.*--)[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?/[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?$"
+      }
+    }
+  },
+  "additionalProperties": false
+}

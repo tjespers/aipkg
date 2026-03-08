@@ -7,6 +7,11 @@ import _ "embed"
 //go:embed spec/schema/package.json
 var PackageSchemaJSON []byte
 
+// ProjectSchemaJSON is the compiled project file JSON Schema.
+//
+//go:embed spec/schema/project.json
+var ProjectSchemaJSON []byte
+
 // ReservedScopesText is the list of reserved scope names.
 //
 //go:embed spec/reserved-scopes.txt

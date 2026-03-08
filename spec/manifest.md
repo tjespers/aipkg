@@ -1,6 +1,6 @@
 # Package Manifest (`aipkg.json`)
 
-The `aipkg.json` file describes an aipkg package: its identity, version, license, and the artifacts it contains. Project-level manifests (for consuming packages within a repo) will have their own schema in a future version.
+The `aipkg.json` file describes an aipkg package: its identity, version, license, and the artifacts it contains. For consuming packages within a project, see the [project file](project.md) (`aipkg-project.json`).
 
 ## Minimal example
 
