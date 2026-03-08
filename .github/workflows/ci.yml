@@ -3,8 +3,16 @@ name: CI
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'features/**'
+      - '*.md'
+      - 'site/**'
   pull_request:
     branches: [main]
+    paths-ignore:
+      - 'features/**'
+      - '*.md'
+      - 'site/**'
 
 permissions:
   contents: read
