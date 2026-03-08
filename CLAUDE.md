@@ -49,6 +49,8 @@ Work is tracked in Linear, team AIPKG, project "CLI".
 - Use `Closes: AIPKG-XX` trailer to link commits to Linear issues
 
 ## Active Technologies
+- Go (per go.mod, currently 1.25) + cobra (CLI routing), santhosh-tekuri/jsonschema/v6 (schema validation), dlclark/regexp2 (PCRE regex for name patterns). No new dependencies. (003-project-initialization)
+- Local filesystem only. `os.Stat` for existence checks, `os.WriteFile` for project file creation. (003-project-initialization)
 
 - Go 1.25 (per go.mod) + cobra (CLI routing), gopkg.in/yaml.v3 (SKILL.md frontmatter), sabhiram/go-gitignore (.aipkgignore patterns), santhosh-tekuri/jsonschema/v6 (manifest schema validation). Archive and SHA-256 via stdlib (`archive/zip`, `crypto/sha256`). (002-archive-format-pack)
 
