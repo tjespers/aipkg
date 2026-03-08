@@ -28,7 +28,7 @@
 - [x] CHK014 - Is the parsing algorithm for three-segment names unambiguous? (Split on `.`, first = scope, last = artifact, middle = package.) Does the spec explicitly state that scope and package names cannot contain dots, making this split safe? [Clarity, Research §R-001, Cross-spec with spec/naming.md] — data-model.md:95-101, R-001 confirms no-dots invariant
 - [ ] CHK015 - For file-based artifacts, is the relationship between the scoped name and the file extension specified? E.g., is the installed file `scope.pkg.artifact.md` or `scope.pkg.artifact` with the original extension preserved? [Gap, Research §R-001] — DEFERRED: install-command scope. data-model.md uses `.ext` placeholder.
 - [ ] CHK016 - For directory-based artifacts (skills), is the internal structure of the installed directory specified? Is it a copy of the original `skills/artifact-name/` directory contents, or does the structure change? [Gap, Spec §FR-012] — DEFERRED: install-command scope
-- [ ] CHK017 - Is the naming convention consistent with the existing dot-notation in `spec/naming.md`? The current spec says `scope.artifact-name`; the plan extends to three segments. Is the update to `spec/naming.md` tracked as a deliverable? [Cross-spec Consistency, Research §R-001] — FAIL: research.md R-001 (line 40) says "spec/naming.md should be updated to document both" but plan.md project structure doesn't list `spec/naming.md` as MODIFIED. Either add it as a deliverable or explicitly state the update is deferred.
+- [x] CHK017 - Is the naming convention consistent with the existing dot-notation in `spec/naming.md`? The current spec says `scope.artifact-name`; the plan extends to three segments. Is the update to `spec/naming.md` tracked as a deliverable? [Cross-spec Consistency, Research §R-001] — RESOLVED: plan.md now lists `spec/naming.md` as MODIFIED in project structure.
 
 ## Cross-Spec Consistency
 
@@ -41,7 +41,7 @@
 
 - [x] CHK022 - Are all three error paths (re-init guard, mutual exclusivity guard, write permission failure) specified with enough detail to write deterministic assertions? [Measurability, Spec §US-2, §US-3, §Edge Cases] — DD-005 defines style, quickstart shows check order, spec gives intent
 - [x] CHK023 - Is the exact content of the error message for the mutual exclusivity guard specified, or just the intent? FR-017 says "suggest `aipkg require` or `aipkg install`" but does not give the exact wording. Is this intentional flexibility or a gap? [Clarity, Spec §FR-017] — Intentional flexibility. DD-005 says follow existing CLI patterns.
-- [ ] CHK024 - Is the success output of `aipkg init` specified? (E.g., should it print a confirmation message like `create` does, or be silent?) [Gap, Spec §FR-015] — Not specified. Needs a decision: follow existing `create` command pattern, or define explicit behavior in the plan.
+- [x] CHK024 - Is the success output of `aipkg init` specified? (E.g., should it print a confirmation message like `create` does, or be silent?) [Gap, Spec §FR-015] — RESOLVED: DD-005 updated to include success output. Follows `create` command pattern.
 
 ## Edge Case Coverage
 
@@ -51,7 +51,7 @@
 
 ## Plan Review Findings
 
-- [ ] CHK028 - `LoadFile()` in `internal/project` is listed as a deliverable (plan.md:66, quickstart.md:11) but no FR or acceptance scenario requires loading project files. Pragmatically justified (test verification, Go package completeness), but the plan should include a one-liner rationale to avoid scope creep questions during code review. [Scope, plan.md]
+- [x] CHK028 - `LoadFile()` in `internal/project` is listed as a deliverable (plan.md:66, quickstart.md:11) but no FR or acceptance scenario requires loading project files. Pragmatically justified (test verification, Go package completeness), but the plan should include a one-liner rationale to avoid scope creep questions during code review. [Scope, plan.md] — RESOLVED: DD-006 added with rationale (test verification + future command dependency).
 
 ## Notes
 

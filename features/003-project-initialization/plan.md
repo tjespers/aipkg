@@ -59,7 +59,8 @@ features/003-project-initialization/
 spec/
 ├── schema/
 │   └── project.json         # NEW: JSON Schema for aipkg-project.json (FR-005)
-└── project.md               # NEW: Reference docs for project model (FR-019)
+├── project.md               # NEW: Reference docs for project model (FR-019)
+└── naming.md                # MODIFIED: Add three-segment install directory naming (DD-001)
 
 internal/
 ├── project/
@@ -102,6 +103,12 @@ Full analysis in [research.md](research.md#r-003-schema-validation-architecture)
 
 The spec (FR-016) requires refusing to overwrite an existing project file. No `--force` override is provided. This follows the constitution's simplicity principle: the feature is either fully present or fully absent. If users need to re-initialize, they can delete the file manually. Adding `--force` later is cheap if demand materializes.
 
-### DD-005: Error messages follow existing CLI patterns
+### DD-005: Error messages and success output follow existing CLI patterns
 
 Error messages use the same style as `create.go` and `pack.go`: lowercase, no period, wrapped with context. The mutual exclusivity error (FR-017) includes actionable suggestions (`aipkg require` / `aipkg install`), matching the spec's acceptance criteria.
+
+Success output follows the `create` command pattern. On successful initialization, `init` prints a confirmation message (e.g., `Initialized project in aipkg-project.json`).
+
+### DD-006: `LoadFile()` included for test verification and future use
+
+`internal/project` ships with both `Create()` and `LoadFile()`. No FR requires loading project files in this feature, but `LoadFile()` is needed for test assertions (roundtrip verification: create a project file, load it back, assert structure) and is the natural counterpart that future commands (`require`, `install`) will depend on. Including it now avoids a test-only utility that gets promoted later.
