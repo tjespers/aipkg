@@ -4,7 +4,7 @@ import _ "embed"
 
 // PackageSchemaJSON is the compiled package manifest JSON Schema.
 //
-//go:embed spec/schema/package.json
+//go:embed spec/schema/aipkg.json
 var PackageSchemaJSON []byte
 
 // ProjectSchemaJSON is the compiled project file JSON Schema.

@@ -33,14 +33,14 @@
 
 ### Specification revisions
 
-- [ ] T004 Rework `spec/schema/aipkg.json` into package-only schema at `spec/schema/package.json`: remove `type` field and `if/then/else` conditionals, add `specVersion` (integer, const 1), make `artifacts` optional, adjust `required` to `[specVersion, name, version]` per data-model.md
+- [ ] T004 Rework the unified schema into a package-only schema at `spec/schema/aipkg.json`: remove `type` field and `if/then/else` conditionals, add `specVersion` (integer, const 1), make `artifacts` optional, adjust `required` to `[specVersion, name, version]` per data-model.md. Delete the old unified schema.
 - [ ] T005 [P] Revise `spec/manifest.md` for package-only manifest format: remove `type` field references, document `specVersion`, update field table and examples to reflect package-only schema
 - [ ] T006 [P] Revise `spec/artifacts.md` for convention-based directory layout: document well-known directories, artifact type mapping table, structural requirements (e.g. skill dirs must contain SKILL.md), name derivation rules per data-model.md
 - [ ] T007 [P] Revise `spec/naming.md` for package-only context: update examples to remove project references, confirm scoped name pattern and reserved scope documentation
 
 ### Embedded assets
 
-- [ ] T008 Implement go:embed for `spec/schema/package.json` and `spec/reserved-scopes.txt` per research.md embed strategy: repo-root embed package exporting `PackageSchemaJSON` and `ReservedScopesText` byte slices (go:embed cannot use `..` paths, so the embed directive must live in an ancestor of `spec/`)
+- [ ] T008 Implement go:embed for `spec/schema/aipkg.json` and `spec/reserved-scopes.txt` per research.md embed strategy: repo-root embed package exporting `PackageSchemaJSON` and `ReservedScopesText` byte slices (go:embed cannot use `..` paths, so the embed directive must live in an ancestor of `spec/`)
 
 ### Internal packages (with table-driven tests)
 

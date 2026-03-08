@@ -13,7 +13,7 @@
 
 **Purpose**: Create the project file JSON Schema and embed it in the binary. Everything else validates against this.
 
-- [x] T001 Create JSON Schema for `aipkg-project.json` in `spec/schema/project.json`. Schema uses Draft 2020-12. Two required fields: `specVersion` (integer, const 1) and `require` (object). `require` keys use the same scoped name pattern as `spec/schema/package.json`. `require` values use the SemVer pre-release regex from research.md R-002. `additionalProperties: false`. Reference `spec/schema/package.json` for structure and style. [FR-004, FR-005, DD-002]
+- [x] T001 Create JSON Schema for `aipkg-project.json` in `spec/schema/project.json`. Schema uses Draft 2020-12. Two required fields: `specVersion` (integer, const 1) and `require` (object). `require` keys use the same scoped name pattern as `spec/schema/aipkg.json`. `require` values use the SemVer pre-release regex from research.md R-002. `additionalProperties: false`. Reference `spec/schema/package.json` for structure and style. [FR-004, FR-005, DD-002]
 - [x] T002 Add `ProjectSchemaJSON` embed in `specdata.go` alongside `PackageSchemaJSON`. Use `//go:embed spec/schema/project.json`. Follow the existing pattern. [DD-003]
 
 **Checkpoint**: Schema exists and compiles into the binary. Run `task build` to verify.

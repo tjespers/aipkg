@@ -164,10 +164,9 @@ Principle IV (Cold Start First) needs amendment. Two things changed:
 The spirit of Principle IV is preserved (zero-config install, cold start
 focus). The wording needs to match the new architecture.
 
-Also noted: `require` field exists in `spec/schema/package.json` but
-does nothing yet. Principle I ("fully implemented or fully absent")
-technically violated. Since install is the next feature, this is minor,
-but worth cleaning up if it bothers you.
+Note: the `require` field was subsequently removed from `spec/schema/aipkg.json`
+per Principle I ("fully implemented or fully absent"). It will be reintroduced
+when pack-time dependency bundling is specced.
 
 ## Open Questions (not blocking spec work)
 

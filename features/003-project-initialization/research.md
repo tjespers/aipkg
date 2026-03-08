@@ -73,7 +73,7 @@ This is the semver.org reference regex with the build metadata group (`+build`) 
 
 ## R-003: Schema validation architecture
 
-**Context**: The existing `internal/schema` package compiles and validates against the package manifest schema (`spec/schema/package.json`). The project file needs its own schema and validation.
+**Context**: The existing `internal/schema` package compiles and validates against the package manifest schema (`spec/schema/aipkg.json`). The project file needs its own schema and validation.
 
 **Decision**: Extend `internal/schema` with a `ValidateProject()` function alongside the existing `Validate()`. Add a second `sync.Once` + compiled schema pair for the project schema. Reuse the existing regexp2 engine setup.
 

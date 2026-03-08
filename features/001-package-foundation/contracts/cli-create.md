@@ -88,7 +88,7 @@ Each field validates inline on submit. Invalid input shows an error message belo
 
 ## Validation Rules
 
-All validation is driven by the JSON Schema (`spec/schema/package.json`) via the schema bridge, except reserved scope checking which uses `spec/reserved-scopes.txt`.
+All validation is driven by the JSON Schema (`spec/schema/aipkg.json`) via the schema bridge, except reserved scope checking which uses `spec/reserved-scopes.txt`.
 
 | Field | Rule | Source |
 |-------|------|--------|

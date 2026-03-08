@@ -92,13 +92,12 @@ On Ctrl+C or validation failure during prompts, the flow exits without writing a
 
 ## JSON Schema (package-only)
 
-The package JSON Schema (`spec/schema/package.json`) replaces the current unified schema. Key changes from the existing `spec/schema/aipkg.json`:
+The package JSON Schema (`spec/schema/aipkg.json`) is a package-only schema. It validates `aipkg.json` manifest files. Key design decisions:
 
-1. **Remove** `type` field (schema describes packages only).
-2. **Add** `specVersion` (integer, required, const `1`).
-3. **Remove** `if/then/else` conditional logic (no type discriminator needed).
-4. **Remove** `require` and `repositories` from required fields (not part of package creation).
-5. **Keep** `artifacts` definition but make it optional (not required at creation time, required at pack time; this may be enforced by a separate "packed package" schema or by the pack command itself).
-6. **Keep** all field-level validation unchanged: name pattern, version pattern, description maxLength.
+1. No `type` field (schema describes packages only).
+2. `specVersion` (integer, required, const `1`).
+3. No `if/then/else` conditional logic (no type discriminator needed).
+4. `artifacts` is optional (not required at creation time, required at pack time; enforced by the pack command).
+5. All field-level validation unchanged: name pattern, version pattern, description maxLength.
 
-The `$defs` for artifact and repository remain in the schema for completeness, but only artifact is referenced. Repository definitions are a project concern and may move to a project schema later.
+The `$defs` section contains the artifact definition only.

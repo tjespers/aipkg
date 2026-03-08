@@ -132,7 +132,7 @@ A package author wants the archive written to a specific location, such as a `di
 
 - The six well-known directories and their type mappings are defined by the package foundation specification (AIPKG-8). This feature does not add or modify artifact types.
 - Artifact name derivation follows the rules established in the foundation spec: directory name for skills, filename stem (everything before the first `.`) for file-based types. This handles compound extensions like `.prompt.md` naturally.
-- The `artifacts` array structure in the manifest follows the schema defined in `spec/schema/package.json`. Each entry has `name` (string), `type` (enum), and `path` (string).
+- The `artifacts` array structure in the manifest follows the schema defined in `spec/schema/aipkg.json`. Each entry has `name` (string), `type` (enum), and `path` (string).
 - YAML frontmatter parsing for SKILL.md follows the standard `---` delimiter convention. The parser handles frontmatter extraction; it does not validate the full YAML specification beyond what's needed for the allowed fields.
 - The `sha256sum` format is: lowercase hex hash, two spaces, filename (e.g., `a1b2c3...  filename.aipkg`). This matches the output of the standard `sha256sum` command-line tool.
 - Zip archive creation uses the standard deflate compression method. No optimization of compression level is in scope.

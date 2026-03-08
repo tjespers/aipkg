@@ -89,7 +89,7 @@ internal/
 │   ├── manifest.go          # PackageManifest struct, JSON marshal/write
 │   └── testdata/            # Golden file fixtures for manifest output
 ├── schema/
-│   ├── embed.go             # go:embed for spec/schema/package.json
+│   ├── embed.go             # go:embed for spec/schema/aipkg.json
 │   ├── validate.go          # Full-document schema validation
 │   └── bridge.go            # Per-field sub-schema extraction, func(string) error bridge for huh
 ├── naming/
@@ -102,7 +102,7 @@ internal/
 
 spec/
 ├── schema/
-│   └── package.json         # Package-only JSON Schema (reworked from unified aipkg.json)
+│   └── aipkg.json           # Package manifest JSON Schema
 ├── manifest.md              # Revised: package-only manifest reference
 ├── artifacts.md             # Revised: convention-based directory layout, structural requirements
 ├── naming.md                # Revised: updated examples, package-only context

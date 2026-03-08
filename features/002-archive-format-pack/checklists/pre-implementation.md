@@ -96,7 +96,7 @@
 - [X] CHK027 Is the well-known directory list in FR-008 consistent with `scaffold.WellKnownDirs` in the codebase and the table in `spec/artifacts.md`? All three should be a single source of truth. [Consistency, Spec §FR-008 vs artifacts.md §11]
   > **Verify during implementation**: The spec and artifacts.md both list the same six directories. Consistency with `scaffold.WellKnownDirs` will be verified when implementing the artifact discovery package (which imports from scaffold).
 
-- [X] CHK028 Does the artifact naming regex in `spec/schema/package.json` (line 62: `^(?!.*--)[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$`) match the prose rules in FR-019 and `spec/naming.md`? The regex allows single-character names; the prose says "1-64 characters." [Consistency, Spec §FR-019 vs schema]
+- [X] CHK028 Does the artifact naming regex in `spec/schema/aipkg.json` (line 62: `^(?!.*--)[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$`) match the prose rules in FR-019 and `spec/naming.md`? The regex allows single-character names; the prose says "1-64 characters." [Consistency, Spec §FR-019 vs schema]
   > **Already resolved**: The regex matches exactly 1-64 characters of `[a-z0-9-]` with no consecutive hyphens, no leading/trailing hyphens. Single-char names (e.g., `a`) are valid by the prose rules too ("1-64 characters"). No inconsistency.
 
 - [X] CHK029 Does FR-019's name derivation rule need to be reflected in `spec/artifacts.md` section "How artifact names are derived" (line 26)? Currently artifacts.md says "filename without its extension" (singular), which differs from "strip from first dot." [Consistency, Spec §FR-019 vs artifacts.md §26]
