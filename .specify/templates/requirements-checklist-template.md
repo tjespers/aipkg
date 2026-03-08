@@ -36,12 +36,19 @@
 - [ ] REQ011 Scope is clearly bounded
 - [ ] REQ012 Dependencies and assumptions identified
 
+## Foundational Validity
+
+- [ ] REQ013 Every FR builds on capabilities that exist in merged specs (`spec/`, merged feature specs) or implemented code, not on brainstorm notes, research sessions, or unimplemented design ideas
+- [ ] REQ014 Schema fields referenced by FRs are either exercised by shipped code or defined in a merged spec that establishes them. Forward declarations (schema fields that exist but no merged spec or code has given meaning to) are not valid foundations.
+- [ ] REQ015 Directory conventions, file formats, or protocols introduced by FRs either (a) are fully defined in this spec or (b) exist in a merged spec. Concepts from `features/research/` or unmerged branches are not valid foundations.
+- [ ] REQ016 No user story depends on a capability that would need to be specced as a separate feature first (Principle I: if no merged spec defines the prerequisite, the requirement is premature)
+
 ## Feature Readiness
 
-- [ ] REQ013 All functional requirements have clear acceptance criteria
-- [ ] REQ014 User scenarios cover primary flows
-- [ ] REQ015 Feature meets measurable outcomes defined in Success Criteria
-- [ ] REQ016 No implementation details leak into specification
+- [ ] REQ017 All functional requirements have clear acceptance criteria
+- [ ] REQ018 User scenarios cover primary flows
+- [ ] REQ019 Feature meets measurable outcomes defined in Success Criteria
+- [ ] REQ020 No implementation details leak into specification
 
 ## Notes
 

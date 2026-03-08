@@ -81,6 +81,39 @@
   category structure is stable.
 -->
 
+## Foundational Validity
+
+<!--
+  CRITICAL: This section catches Principle I violations before implementation.
+
+  For each FR that references an external concept (directory convention,
+  schema field, file format, behavior from another feature), trace the
+  concept back to its source and verify it exists in shipped artifacts:
+
+  VALID foundations:
+    - spec/*.md documents (shipped reference documentation)
+    - spec/schema/*.json schemas that are defined by a merged spec
+    - Merged feature specs (features/NNN/spec.md on main, even if
+      not yet implemented as code)
+    - Implemented and tested code in internal/
+
+  INVALID foundations (must be flagged):
+    - features/research/ brainstorm sessions
+    - Unexercised schema fields with no merged spec giving them meaning
+    - Design decisions from unmerged branches or draft specs
+    - "Future" concepts mentioned only in assumptions or roadmap items
+
+  If an FR builds on an invalid foundation, it is premature and should
+  be removed from this spec or deferred until the foundation is merged.
+
+  Incident context: 004-package-install originally specced bundled
+  dependency extraction building on a deps/ directory concept that only
+  existed in brainstorm notes. Four separate reviews missed it because
+  they checked internal consistency but not foundational validity.
+-->
+
+- [ ] PRE0XX [Foundational validity items generated from feature context]
+
 ## Cross-Spec Consistency
 
 <!--
