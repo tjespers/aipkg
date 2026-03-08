@@ -246,8 +246,8 @@ code review finding.
 1. The specification (`spec/`) is the authority for manifest schema,
    naming rules, and artifact type definitions. The CLI implements the
    spec. It does not extend or contradict it.
-2. Brainstorm docs in `research/` are the source of truth for settled
-   design decisions.
+2. Brainstorm docs in `features/research/` are the source of truth for
+   settled design decisions.
 3. This constitution governs CLI-specific development principles,
    standards, and architectural boundaries.
 4. Linear (team AIPKG, project "CLI") is the work tracker.
