@@ -47,6 +47,11 @@ Work is tracked in Linear, team AIPKG, project "CLI".
 - Conventional commits (enforced by pre-commit hook)
 - Use `git commit -s` for DCO sign-off (CNCF requirement)
 - Use `Closes: AIPKG-XX` trailer to link commits to Linear issues
+- Type selection matters for changelog generation (`feat` and `fix` appear in changelogs, other types do not):
+  - `feat` / `fix`: code changes only (user-facing features and bug fixes)
+  - `docs(spec)` / `docs(plan)` / `docs(checklist)` / `docs(tasks)`: speckit artifacts in `features/`
+  - `ci`: workflow and pipeline changes
+  - `chore`, `refactor`, `test`, `build`, `perf`, `style`: standard conventional commit types
 
 ## Active Technologies
 - Go (per go.mod, currently 1.25) + cobra (CLI routing), santhosh-tekuri/jsonschema/v6 (schema validation), dlclark/regexp2 (PCRE regex for name patterns). No new dependencies. (003-project-initialization)
