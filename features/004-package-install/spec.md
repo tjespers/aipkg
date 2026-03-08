@@ -1,0 +1,167 @@
+# Feature Specification: Package Install (Dist Strategy)
+
+**Feature Branch**: `004-package-install`
+**Created**: 2026-03-08
+**Status**: Draft
+**Input**: User description: "Close the pack-to-install loop. Developers run `aipkg require @scope/name` to add a package and install it, or `aipkg install` (no args) to install everything listed in the project file's `require` field. Covers only `type: \"package\"` entries (pre-built `.aipkg` archives from the registry index). Source/recipe strategy is a separate effort (AIPKG-7)."
+
+## User Scenarios & Testing *(mandatory)*
+
+### User Story 1 - Add a package to a project (Priority: P1)
+
+A developer working on a project wants to use an AI skill published to the aipkg registry. They run `aipkg require @tjespers/golang-expert` in their project root. The CLI resolves the package from the registry, downloads the `.aipkg` archive, verifies its integrity, unpacks it into the project's install directory, and records the dependency in `aipkg-project.json`. The developer now has the package available locally.
+
+**Why this priority**: This is the core value proposition. Without the ability to add a package, the CLI is a pack-only tool. Everything else (bulk install, version pinning, dep extraction) builds on this flow.
+
+**Independent Test**: Can be fully tested by setting up a local static file server with a per-package JSON file and a corresponding `.aipkg` archive, pointing `AIPKG_REGISTRY` at it, initializing a project with `aipkg init`, and running `aipkg require @scope/name`. Verify that the archive is unpacked and the project file is updated.
+
+**Acceptance Scenarios**:
+
+1. **Given** an initialized project (with `aipkg-project.json`) and a registry containing `@tjespers/golang-expert` at version `1.0.0`, **When** the developer runs `aipkg require @tjespers/golang-expert`, **Then** the package is downloaded, verified, and unpacked to `.aipkg/packages/@tjespers/golang-expert/`, and `aipkg-project.json` contains `"@tjespers/golang-expert": "1.0.0"` in its `require` field.
+2. **Given** a successful require, **When** the developer inspects `.aipkg/packages/@tjespers/golang-expert/`, **Then** the directory contains the package's `aipkg.json` manifest and all its artifact files (the top-level archive directory has been stripped per the archive format spec).
+3. **Given** a successful require, **When** the developer inspects `.aipkg/`, **Then** a `.gitignore` file exists that ignores all contents (if the project is inside a git repository).
+4. **Given** a package already required at version `1.0.0`, **When** the developer runs `aipkg require @tjespers/golang-expert` and the registry now has `1.1.0` as the latest, **Then** the installed package is replaced with `1.1.0` and `aipkg-project.json` is updated to reflect `1.1.0`.
+5. **Given** a package already installed at the latest version, **When** the developer runs `aipkg require @tjespers/golang-expert`, **Then** the command reports that the package is already up to date and makes no changes.
+
+---
+
+### User Story 2 - Install all project dependencies (Priority: P2)
+
+A developer clones or checks out a project that has packages listed in its `aipkg-project.json`. They run `aipkg install` to install all dependencies at their pinned versions. This is the reproducibility story: any developer can set up the same package environment from the project file alone.
+
+**Why this priority**: Without bulk install, collaborators would need to run `aipkg require` for each dependency individually. This command makes project setup a single step.
+
+**Independent Test**: Can be tested by creating an `aipkg-project.json` with multiple entries in `require`, running `aipkg install`, and verifying all packages are installed at the specified versions.
+
+**Acceptance Scenarios**:
+
+1. **Given** an `aipkg-project.json` with `require` containing `"@tjespers/golang-expert": "1.0.0"` and `"@alice/blog-writer": "2.0.0"`, **When** the developer runs `aipkg install`, **Then** both packages are resolved, downloaded, verified, and unpacked to their respective directories under `.aipkg/packages/`.
+2. **Given** some packages are already installed at the correct versions, **When** the developer runs `aipkg install`, **Then** already-installed packages are skipped and only missing or outdated packages are downloaded.
+3. **Given** an `aipkg-project.json` with an empty `require` object, **When** the developer runs `aipkg install`, **Then** the command completes successfully with a message indicating no packages to install.
+
+---
+
+### User Story 3 - Pin a specific package version (Priority: P3)
+
+A developer needs a specific version of a package rather than the latest. They run `aipkg require @tjespers/golang-expert@1.0.0` to add and install that exact version.
+
+**Why this priority**: Version pinning is essential for reproducibility, but most developers will use the default (latest) on initial require. Explicit pinning is a more deliberate action.
+
+**Independent Test**: Can be tested by setting up a registry with multiple versions and verifying that `aipkg require @scope/name@1.0.0` installs the requested version rather than the latest.
+
+**Acceptance Scenarios**:
+
+1. **Given** a registry containing `@tjespers/golang-expert` at versions `1.0.0` and `1.1.0`, **When** the developer runs `aipkg require @tjespers/golang-expert@1.0.0`, **Then** version `1.0.0` is installed and recorded in `aipkg-project.json`.
+2. **Given** a version that does not exist in the registry, **When** the developer runs `aipkg require @tjespers/golang-expert@9.9.9`, **Then** the command fails with a clear error listing the available versions.
+
+---
+
+### User Story 4 - Bundled dependency extraction (Priority: P4)
+
+A developer installs a package that bundles its own dependencies (nested `.aipkg` archives inside a `deps/` directory in the main archive). The install command extracts the main package and all its bundled dependencies into separate directories under `.aipkg/packages/`.
+
+**Why this priority**: Bundled deps are part of the Helm-style dependency model and necessary for packages that compose other packages. However, no packages will bundle deps until pack-time dependency resolution (a separate feature) is implemented. This is forward-compatible preparation.
+
+**Independent Test**: Can be tested by hand-crafting an `.aipkg` archive that contains a `deps/` directory with nested `.aipkg` files, and verifying that `aipkg require` extracts both the main package and the bundled deps.
+
+**Acceptance Scenarios**:
+
+1. **Given** a package archive containing `deps/alice--helper-1.0.0.aipkg`, **When** the developer runs `aipkg require @tjespers/golang-expert`, **Then** the main package is extracted to `.aipkg/packages/@tjespers/golang-expert/` and the bundled dependency is extracted to `.aipkg/packages/@alice/helper/`.
+2. **Given** a package with no `deps/` directory, **When** the developer runs `aipkg require`, **Then** only the main package is extracted (no error about missing deps).
+3. **Given** a bundled dependency that is also directly required by the project, **When** the bundled dep and the direct require specify the same version, **Then** the package is present once in `.aipkg/packages/` (no conflict, no duplication).
+
+---
+
+### Edge Cases
+
+- What happens when no `aipkg-project.json` exists? Both `aipkg require` and `aipkg install` refuse with a clear error directing the developer to run `aipkg init` first.
+- What happens when the registry is unreachable (network error, DNS failure)? The command fails with an error describing the network issue and the registry URL it tried to reach.
+- What happens when the per-package index entry returns a non-200 HTTP status? A 404 means the package is not found. Other errors are reported as registry errors with the HTTP status.
+- What happens when the SHA-256 hash of the downloaded archive does not match the hash in the index entry? The command refuses to extract, deletes the downloaded file, and reports an integrity verification failure.
+- What happens when the archive URL in the dist block is unreachable? The command fails with a download error showing the URL that failed.
+- What happens when the developer has no write permission on the project directory? The command fails with a filesystem error.
+- What happens when `aipkg require` is run in a package directory (one containing `aipkg.json`)? The command refuses with an error explaining that `require` operates on projects, not packages. This mirrors the mutual exclusivity guard from `aipkg init`.
+- What happens when `aipkg install` encounters a failure partway through (e.g., second of three packages fails)? Packages that installed successfully before the failure remain installed. The error reports which package failed and which packages still need to be installed.
+- What happens when the `AIPKG_REGISTRY` environment variable is set to an invalid URL? The command fails with an error describing the invalid registry URL.
+- What happens when a bundled dependency archive inside `deps/` is corrupt or structurally invalid (not a valid `.aipkg` archive, missing `aipkg.json`)? The entire require operation fails. The main package and any previously extracted deps from that operation are cleaned up.
+- What happens when the developer runs `aipkg require` with an invalid package name (no scope, uppercase characters, consecutive hyphens)? The command fails immediately with a validation error describing the naming rules, before attempting any registry request.
+
+## Requirements *(mandatory)*
+
+### Functional Requirements
+
+**Per-package index format:**
+
+- **FR-001**: The per-package index entry format for `type: "package"` entries MUST be defined and documented. Each entry contains the package name, description, type indicator, and a versions map. Each version entry contains a `dist` block with the archive download URL and its SHA-256 hash. This format is the contract between the registry and the CLI.
+- **FR-002**: A JSON Schema for the per-package index entry MUST be provided to enable validation by the CLI and third-party registry tooling.
+
+**Registry resolution:**
+
+- **FR-003**: The CLI MUST resolve packages by fetching a per-package metadata file from the registry. The URL is constructed as `{registry_base_url}/@scope/name.json`, where `{registry_base_url}` defaults to `https://packages.aipkg.dev`.
+- **FR-004**: The `AIPKG_REGISTRY` environment variable MUST override the default registry URL. This is the only registry configuration mechanism in v1 (full `repositories` configuration is deferred).
+- **FR-005**: When no version is specified, the CLI MUST select the latest version by choosing the highest semver key from the `versions` map in the index entry.
+- **FR-006**: When a specific version is requested (via `@version` syntax), the CLI MUST select exactly that version from the `versions` map. If the requested version does not exist, the command MUST fail with an error listing the available versions.
+
+**Archive download and verification:**
+
+- **FR-007**: The CLI MUST download the `.aipkg` archive from the URL specified in the selected version's `dist` block.
+- **FR-008**: The CLI MUST verify the SHA-256 hash of the downloaded archive against the `sha256` value in the index entry's `dist` block. If the hash does not match, the archive MUST NOT be extracted and the command MUST fail with an integrity error.
+- **FR-009**: The default registry URL MUST use HTTPS. When following HTTP redirects, the CLI MUST NOT downgrade an HTTPS URL to HTTP. Dist URLs using plain HTTP are permitted to support local development and testing with static file servers.
+
+**Package extraction:**
+
+- **FR-010**: Packages MUST be extracted to `.aipkg/packages/@scope/name/` within the project root. The top-level directory inside the archive is stripped during extraction, consistent with the archive format specification.
+- **FR-011**: If a package is already installed at a different version, the existing package directory MUST be completely removed before the new version is extracted.
+- **FR-012**: If a package is already installed at the same version that would be installed, the command MUST skip the archive download and report that the package is already up to date. The metadata fetch still occurs to determine which version is current.
+
+**Install directory management:**
+
+- **FR-013**: The `.aipkg/` directory MUST be created on demand when the first package is installed. If the project root is inside a git repository, a `.gitignore` file MUST be placed inside `.aipkg/` that ignores all contents (per the project initialization specification, FR-009).
+- **FR-014**: The `packages/` subdirectory within `.aipkg/` MUST be created on demand. After install and before adapter execution (AIPKG-11), `.aipkg/` contains only `packages/` and `.gitignore`. The categorized artifact directories (`.aipkg/skills/`, `.aipkg/prompts/`, etc.) and merged files defined by the project initialization specification materialize when adapters run.
+
+**Bundled dependency extraction:**
+
+- **FR-015**: When an archive contains a `deps/` directory with nested `.aipkg` files, the CLI MUST extract each bundled dependency to its own directory under `.aipkg/packages/`, using the same extraction rules as the main package (strip top-level directory). Each bundled archive MUST be validated as a structurally valid `.aipkg` file (valid zip, single top-level directory, contains `aipkg.json`). SHA-256 verification does not apply to bundled deps because they have no index entry with an expected hash; structural validation is sufficient since the parent archive's integrity was already verified.
+- **FR-016**: Bundled dependencies MUST NOT be added to the project file's `require` field. They are transitive dependencies managed by the parent package, not direct project dependencies.
+- **FR-017**: If a bundled dependency conflicts with a directly required package at a different version, the directly required version takes precedence. The bundled version is not extracted. The CLI MUST emit a warning identifying the conflict so the developer is aware of the version mismatch.
+
+**Project file management:**
+
+- **FR-018**: `aipkg require @scope/name` MUST add or update the package entry in `aipkg-project.json`'s `require` field with the resolved version.
+- **FR-019**: `aipkg install` (no arguments) MUST read the `require` field from `aipkg-project.json` and install all listed packages at their pinned versions.
+- **FR-020**: If `aipkg install` fails partway through (e.g., one package in a multi-package install fails to resolve or download), packages that were successfully installed before the failure MUST be retained. The error MUST identify which package failed and which packages remain uninstalled.
+- **FR-021**: Both `aipkg require` and `aipkg install` MUST require an existing `aipkg-project.json` in the current directory. If none exists, the command MUST fail with an error directing the developer to run `aipkg init`.
+- **FR-022**: Both commands MUST refuse to operate in a directory containing `aipkg.json` (a package manifest), mirroring the mutual exclusivity guard from the project initialization specification.
+- **FR-023**: When writing to `aipkg-project.json`, the CLI MUST preserve existing content (other `require` entries, `specVersion`) and only modify the relevant entry. The file MUST be written with consistent formatting (indented JSON).
+
+**Documentation:**
+
+- **FR-024**: The per-package index entry format, resolution algorithm, and install directory layout under `.aipkg/packages/` MUST be documented as reference material in `spec/`. This documentation is a deliverable of this feature.
+
+### Key Entities
+
+- **Per-Package Index Entry**: A JSON document served by the registry at `{base_url}/@scope/name.json`. Contains the package name, description, type (`"package"` for dist strategy entries), and a versions map where each key is a semver version string and each value contains a dist block with the archive URL and SHA-256 hash.
+- **Dist Block**: A structure within a version entry that provides the download URL for the `.aipkg` archive and the expected SHA-256 hash for integrity verification. The URL can point to any HTTP or HTTPS endpoint (GitHub Releases, a CDN, a static file server, a local test server).
+- **Installed Package**: A directory at `.aipkg/packages/@scope/name/` containing the extracted archive contents (manifest, artifact files). The directory's `aipkg.json` is the source of truth for the installed version.
+
+## Assumptions
+
+- The project initialization feature (003) has established `aipkg-project.json` as the project file with `specVersion` and `require` fields. This feature reads from and writes to that file. It does not modify the format.
+- The archive format (002) is stable. Archives contain a single top-level directory, and extraction strips it. The `deps/` directory for bundled dependencies is a new convention introduced by this feature.
+- Adapter execution (AIPKG-11) is entirely separate. This feature places raw package contents under `.aipkg/packages/`. After install (before adapters run), `.aipkg/` contains only `packages/` and `.gitignore`. Adapters will later read from `packages/` and create symlinks, merged files, and tool-specific configurations in the categorized directories (`.aipkg/skills/`, `.aipkg/prompts/`, etc.) defined by the project initialization specification.
+- The central registry at `packages.aipkg.dev` will serve static JSON files. The CLI does not depend on any server-side logic; any static file server can act as a registry.
+- No caching is implemented in v1. Every `require` or `install` operation fetches fresh metadata from the registry. This is acceptable for the initial feature and avoids complexity around cache invalidation.
+- Package names in the index entry's `name` field follow the established naming rules from `spec/naming.md`. The CLI reuses existing name validation logic.
+- The `require` field in `aipkg-project.json` uses strict semver (MAJOR.MINOR.PATCH) for dist strategy packages. Pre-release identifiers in require values are allowed by the project schema but will not appear in practice until the source/recipe strategy is implemented.
+
+## Success Criteria *(mandatory)*
+
+### Measurable Outcomes
+
+- **SC-001**: A developer can add a package to their project with a single command (`aipkg require @scope/name`) and no prior setup beyond `aipkg init`. The package is immediately available on disk.
+- **SC-002**: A developer can reproduce another developer's package environment by cloning a project and running `aipkg install`. All packages are installed at the exact versions specified in the project file.
+- **SC-003**: Every installed package has its integrity verified before extraction. A tampered archive is never unpacked.
+- **SC-004**: The CLI provides clear, actionable error messages for all failure modes: package not found, version not found, network errors, integrity failures, missing project file.
+- **SC-005**: The per-package index entry format and resolution algorithm are documented clearly enough that a third party could implement a compatible registry without access to the aipkg source code.
+- **SC-006**: Installing a package that is already present at the correct version completes without re-downloading, confirming idempotent behavior.
+- **SC-007**: A developer can test the full require/install flow locally by running a static file server and setting `AIPKG_REGISTRY`, with no dependency on the production registry.
