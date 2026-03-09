@@ -17,8 +17,8 @@ Loading from embedded bytes:
 doc, err := jsonschema.UnmarshalJSON(bytes.NewReader(schemaBytes))
 c := jsonschema.NewCompiler()
 c.DefaultDraft(jsonschema.Draft2020)
-c.AddResource("package.json", doc)
-root, err := c.Compile("package.json")
+c.AddResource("aipkg.json", doc)
+root, err := c.Compile("aipkg.json")
 ```
 
 Per-field validation:

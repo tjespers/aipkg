@@ -32,9 +32,9 @@
 
 ## Cross-Spec Consistency
 
-- [x] CHK018 - Does the project file `require` key pattern match the package manifest `require` key pattern exactly (same regex)? [Consistency, Spec §Assumption 2, spec/schema/package.json] — data-model.md:20 confirms
-- [x] CHK019 - Is the distinction between package `require` (bundled dependencies, resolved at pack time) and project `require` (installed dependencies, resolved at install time) clear enough that implementers won't confuse the two? [Clarity, Spec §Assumption 5] — Spec Assumption 5 is explicit
-- [x] CHK020 - Are the artifact type names used in the install directory layout (`skills/`, `prompts/`, `commands/`, `agents/`) consistent with the `type` enum values in `spec/schema/package.json` (`skill`, `prompt`, `command`, `agent`)? Note the singular-vs-plural difference. [Cross-spec Consistency, Spec §FR-007] — data-model.md:86-91 maps singular types to plural directories, consistent with artifacts.md
+- [x] CHK018 - Does the project file `require` key pattern use the same scoped name regex as the package manifest schema (`spec/schema/aipkg.json`)? [Consistency, Spec §Assumption 2] — data-model.md:20 confirms
+- [x] CHK019 - Is the project `require` field (installed dependencies, resolved at install time) clearly scoped? Package-level dependencies (bundled at pack time) are a separate concern. [Clarity, Spec §Assumption 5] — Spec Assumption 5 is explicit
+- [x] CHK020 - Are the artifact type names used in the install directory layout (`skills/`, `prompts/`, `commands/`, `agents/`) consistent with the `type` enum values in `spec/schema/aipkg.json` (`skill`, `prompt`, `command`, `agent`)? Note the singular-vs-plural difference. [Cross-spec Consistency, Spec §FR-007] — data-model.md:86-91 maps singular types to plural directories, consistent with artifacts.md
 - [x] CHK021 - Is the mutual exclusivity of `aipkg.json` and `aipkg-project.json` documented in both directions? The 003 spec covers "init refuses when aipkg.json exists." Does it also address future commands that create `aipkg.json` refusing when `aipkg-project.json` exists? [Coverage, Spec §FR-002] — FR-002 states the bidirectional invariant. This feature implements one direction. spec/project.md should state the full rule.
 
 ## Acceptance Criteria Quality
@@ -58,4 +58,4 @@
 - Focus: Spec quality for downstream implementers (especially the install command, AIPKG-10)
 - Depth: Standard
 - Audience: Implementer/reviewer at PR review time
-- Cross-spec references checked: `spec/naming.md`, `spec/artifacts.md`, `spec/schema/package.json`, `spec/manifest.md`
+- Cross-spec references checked: `spec/naming.md`, `spec/artifacts.md`, `spec/schema/aipkg.json`, `spec/manifest.md`

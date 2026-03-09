@@ -118,7 +118,7 @@ internal/
 
 spec/
 ├── schema/
-│   └── package.json         # Unchanged (artifacts array already defined)
+│   └── aipkg.json           # Unchanged (artifacts array already defined)
 ├── archive.md               # NEW: archive format reference doc
 ├── artifacts.md             # Updated: relaxed file extensions, compound name derivation
 ├── manifest.md              # Unchanged

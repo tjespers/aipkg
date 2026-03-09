@@ -129,23 +129,6 @@ See [Artifact Types](artifacts.md) for detailed format conventions per type.
 
 Paths must use forward slashes. They must not escape the package root (no `../`).
 
-### `require`
-
-**Optional.** Dependencies on other packages.
-
-An object where keys are scoped package names and values are exact semver versions.
-
-```json
-"require": {
-  "@tjespers/golang-expert": "1.0.0",
-  "@alice/blog-writer": "2.0.0"
-}
-```
-
-These are dependencies that get installed transitively when someone installs your package.
-
-v1 supports exact versions only. No version ranges (`^1.0.0`, `~2.1`) yet.
-
 ## Complete example
 
 ```json
@@ -161,10 +144,7 @@ v1 supports exact versions only. No version ranges (`^1.0.0`, `~2.1`) yet.
     { "name": "test-writer", "type": "skill", "path": "skills/test-writer/" },
     { "name": "refactoring", "type": "skill", "path": "skills/refactoring/" },
     { "name": "go-docs", "type": "mcp-server", "path": "mcp-servers/go-docs.json" }
-  ],
-  "require": {
-    "@tjespers/go-tools": "1.0.0"
-  }
+  ]
 }
 ```
 

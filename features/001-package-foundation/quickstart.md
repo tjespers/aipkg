@@ -98,7 +98,7 @@ Error: missing required flags for non-interactive mode: --version
 
 ## Validation checklist
 
-- [ ] Generated aipkg.json passes `spec/schema/package.json` validation
+- [ ] Generated aipkg.json passes `spec/schema/aipkg.json` validation
 - [ ] All six well-known directories are created
 - [ ] Existing files in --path target are preserved
 - [ ] Ctrl+C during prompts leaves no files behind

@@ -61,7 +61,7 @@ The top-level directory name is the package name (part after `/` in `@scope/name
 ## Pipeline Order
 
 1. Load `aipkg.json` from source directory
-2. Validate manifest against `spec/schema/package.json`
+2. Validate manifest against `spec/schema/aipkg.json`
 3. Load `.aipkgignore` (if exists) + built-in defaults
 4. Discover artifacts from well-known directories (filtered by ignore rules)
 5. Validate each artifact (type-specific rules)

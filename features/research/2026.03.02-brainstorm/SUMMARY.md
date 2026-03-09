@@ -135,8 +135,9 @@ Full details: [03-roadmap-implications.md](03-roadmap-implications.md)
 - Constitution Principle IV still references `@virtual/owner:repo` and
   "GitHub-first distribution via GitHub Releases." Wording needs amendment
   to match the index-based model.
-- The `require` field exists in `spec/schema/package.json` but does nothing
-  yet (Principle I concern). Needs reworking as part of the install spec.
+- The `require` field was removed from `spec/schema/aipkg.json` (Principle I:
+  forward declaration with no implementation). Will be reintroduced when
+  pack-time dependency bundling is specced.
 - The relationship between AIPKG-5 and AIPKG-52 (merge or keep separate?).
 - Whether AIPKG-9, AIPKG-13, AIPKG-15 should be closed or kept as re-scoped items.
 - GitHub API strategy for source installs (tarball vs contents API).

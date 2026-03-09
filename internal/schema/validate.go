@@ -52,11 +52,11 @@ func compiled() (*jsonschema.Schema, error) {
 		c := jsonschema.NewCompiler()
 		c.DefaultDraft(jsonschema.Draft2020)
 		c.UseRegexpEngine(regexp2Compile)
-		if err := c.AddResource("package.json", doc); err != nil {
+		if err := c.AddResource("aipkg.json", doc); err != nil {
 			compileErr = fmt.Errorf("adding schema resource: %w", err)
 			return
 		}
-		compiledSchema, compileErr = c.Compile("package.json")
+		compiledSchema, compileErr = c.Compile("aipkg.json")
 	})
 	return compiledSchema, compileErr
 }

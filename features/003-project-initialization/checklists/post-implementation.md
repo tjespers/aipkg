@@ -28,11 +28,11 @@
 
 ## Schema Correctness
 
-- [x] POST010 Does `spec/schema/project.json` use Draft 2020-12 and follow the structure/style of `spec/schema/package.json`? (FR-005)
+- [x] POST010 Does `spec/schema/project.json` use Draft 2020-12 and follow the structure/style of `spec/schema/aipkg.json`? (FR-005)
   - **PASS.** `"$schema": "https://json-schema.org/draft/2020-12/schema"`. Structure follows `package.json` style: `$schema`, `$id`, `title`, `description`, `type`, `required`, `properties`, `additionalProperties`.
 - [x] POST011 Does the schema enforce `additionalProperties: false` on the root object, rejecting identity fields and any unknown properties? (FR-003)
   - **PASS.** Root-level `"additionalProperties": false`. `TestValidateProject/extra_fields_rejected` confirms that adding `"name"` fails validation.
-- [x] POST012 Does the schema's `require` key pattern match the package manifest's `require` key pattern exactly (same regex)? (CHK018, Assumption 2)
+- [x] POST012 Does the schema's `require` key pattern use the same scoped name regex as `spec/schema/aipkg.json`? (CHK018, Assumption 2)
   - **PASS.** Both schemas use identical `propertyNames` pattern: `^@(?!.*--)[a-z0-9]([a-z0-9-]{0,37}[a-z0-9])?/[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$`
 - [x] POST013 Does the schema accept pre-release versions (`1.0.0-beta.1`, `1.0.0-rc.1`, `1.0.0-0.3.7`) but reject build metadata (`1.0.0+build.1`)? (FR-004, DD-002, R-002)
   - **PASS.** Project schema version pattern includes the optional pre-release group `(?:-(...))?` but no `+` group. Tests confirm: `valid project with pre-release version`, `valid project with alpha pre-release`, `valid project with numeric pre-release`, `valid project with rc pre-release` all pass; `build metadata rejected` fails validation.
@@ -60,7 +60,7 @@
 
 ## Cross-Spec Consistency
 
-- [x] POST023 Are the artifact type directory names in documentation (`skills/`, `prompts/`, `commands/`, `agents/`) consistent with `spec/artifacts.md` and the `type` enum in `spec/schema/package.json`? (CHK020)
+- [x] POST023 Are the artifact type directory names in documentation (`skills/`, `prompts/`, `commands/`, `agents/`) consistent with `spec/artifacts.md` and the `type` enum in `spec/schema/aipkg.json`? (CHK020)
   - **PASS.** `spec/project.md` layout uses `skills/`, `prompts/`, `commands/`, `agents/`. `spec/artifacts.md` lists the same four directory names. `spec/schema/package.json` `type` enum: `["skill", "prompt", "command", "agent", "agent-instructions", "mcp-server"]`. The two merged types (`agent-instructions`, `mcp-server`) appear as root-level files in the install layout, consistent with the adapter behavior documented in `spec/artifacts.md`.
 - [x] POST024 Is the `specVersion` field definition consistent between the project schema and the package manifest schema (integer, const 1)? (CHK006)
   - **PASS.** Both schemas define `specVersion` as `"type": "integer", "const": 1`.

@@ -109,10 +109,10 @@ A developer runs `aipkg init` in a directory that contains an `aipkg.json` (a pa
 ## Assumptions
 
 - The six artifact types and their classification into individual vs. mergeable categories are defined by the package foundation specification (001) and `spec/artifacts.md`. This feature does not add or modify artifact types.
-- The `require` field in the project file uses the same scoped name format (`@scope/package-name`) as the existing `require` field in the package manifest schema (`spec/schema/package.json`). The name validation pattern is reusable. The version pattern needs extending: the package manifest uses strict MAJOR.MINOR.PATCH, while the project file also accepts optional pre-release identifiers per FR-004 (e.g. `1.0.0-beta.1`).
+- The `require` field in the project file uses the same scoped name format (`@scope/package-name`) as defined in `spec/schema/aipkg.json`. The name validation pattern is reusable. The version pattern needs extending: the package manifest uses strict MAJOR.MINOR.PATCH, while the project file also accepts optional pre-release identifiers per FR-004 (e.g. `1.0.0-beta.1`).
 - Dot-notation as defined in `spec/naming.md` provides the basis for scoped artifact naming. The planning phase will finalize whether the format needs to include the package name in addition to scope and artifact name, based on collision analysis and tool compatibility research.
 - The `.aipkg/` directory contains no committed files in v1. The strict `.gitignore` is sufficient; no exceptions are needed.
-- The `require` field in the package manifest (`aipkg.json`) and the `require` field in the project file (`aipkg-project.json`) are separate concerns. The package `require` handles bundled dependencies resolved at pack time. The project `require` handles installed dependencies resolved at install time. This feature does not modify the package manifest schema.
+- The project `require` field handles installed dependencies resolved at install time. Package-level dependencies (bundled at pack time) are a separate concern that will be specced independently. This feature does not modify the package manifest schema.
 - The mutual exclusivity check (FR-017) is a simple file-existence guard with no interactive component. It behaves identically in interactive and non-interactive environments.
 
 ## Success Criteria *(mandatory)*
