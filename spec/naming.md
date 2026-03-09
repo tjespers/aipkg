@@ -70,36 +70,7 @@ Each artifact within a package also has a name. Artifact names follow the same c
 
 ## Dot-notation
 
-When artifacts are installed or referenced, dots separate namespace segments. The `@` and `/` from the package name don't appear in installed file or directory names.
-
-### Install directory naming (three-segment)
-
-Artifacts installed into a project's `.aipkg/` directory use three-segment dot-notation:
-
-```text
-scope.package-name.artifact-name
-```
-
-The three segments provide full traceability from any installed artifact back to its source package. Given `alice.blog-tools.code-review`, you can reconstruct the source package `@alice/blog-tools` and artifact `code-review`.
-
-This format is necessary because two packages from the same scope can have artifacts with the same name. Two-segment naming (`scope.artifact-name`) would collide in that case.
-
-**Examples:**
-
-Given `@alice/blog-tools` with a prompt artifact `code-review` and `@alice/deploy-kit` with a command artifact `deploy`:
-
-```text
-.aipkg/prompts/alice.blog-tools.code-review.md
-.aipkg/commands/alice.deploy-kit.deploy.md
-```
-
-Given `@shiftbase/golang-expert` with a skill artifact `test-writer`:
-
-```text
-.aipkg/skills/shiftbase.golang-expert.test-writer/SKILL.md
-```
-
-See [Project File](project.md#scoped-artifact-naming) for the full install directory specification.
+When artifacts are referenced in tool-specific locations, dots separate namespace segments. The `@` and `/` from the package name don't appear in file or directory names.
 
 ### Adapter naming (two-segment)
 
@@ -138,5 +109,4 @@ The CLI rejects packages that use a reserved scope. The full list is maintained 
 | Scope         | `a-z`, `0-9`, `-`     | 1-39   | No leading/trailing/consecutive hyphens                                 |
 | Package name  | `a-z`, `0-9`, `-`     | 1-64   | No leading/trailing/consecutive hyphens                                 |
 | Artifact name | `a-z`, `0-9`, `-`     | 1-64   | No leading/trailing/consecutive hyphens, unique per type within package |
-| Dot-notation (install) | `scope.pkg.artifact`  | N/A    | Three-segment, used in `.aipkg/` install directory                      |
 | Dot-notation (adapter) | `scope.artifact-name` | N/A    | Two-segment, used by adapters in tool-specific locations                |

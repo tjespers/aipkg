@@ -47,16 +47,14 @@
   - **PASS.** Documents both fields (`specVersion`, `require`) with type descriptions, constraints, and examples. Shows minimal example (empty require) and full example with three dependencies including a pre-release version.
 - [x] POST017 Does `spec/project.md` document the install directory layout: `.aipkg/` structure, four individual-type subdirectories, two merged root-level files? (FR-006, FR-007, FR-008)
   - **PASS.** "Install directory" section shows full tree: `skills/`, `prompts/`, `commands/`, `agents/` as individual-type subdirectories, plus `mcp.json` and `agent-instructions.md` as merged root-level files.
-- [x] POST018 Does `spec/project.md` document the three-segment scoped naming convention (`scope.package-name.artifact-name`) with parsing rules and examples? (FR-012, FR-013, DD-001)
-  - **PASS.** "Scoped artifact naming" section documents three-segment format, explains collision prevention and traceability, describes parsing rules ("split on `.`, first = scope, last = artifact, middle = package"), and provides concrete examples.
+- [x] POST018 ~~Does `spec/project.md` document the three-segment scoped naming convention?~~ **SUPERSEDED.** FR-012/FR-013/FR-014 removed. Decision 72 dropped three-segment naming in favor of original artifact names. The scoped naming section was removed from `spec/project.md`.
 - [x] POST019 Does `spec/project.md` document the `.gitignore` behavior (content: `*` + `!.gitignore`, git-only, created at install time)? (FR-009, FR-010)
   - **PASS.** ".gitignore" subsection shows the file content (`*` / `!.gitignore`), states it's created "inside a git repository", and clarifies `.gitignore` itself is the only committed file inside `.aipkg/`.
 - [x] POST020 Does `spec/project.md` document the merged file ownership model (aipkg-managed, overwritten on install/update, manual edits lost)? (FR-011)
   - **PASS.** "Merged files" subsection: "fully aipkg-managed", "generated and overwritten by install and update operations", "Manual edits to these files will be lost."
 - [x] POST021 Does `spec/project.md` document the mutual exclusivity rule in both directions (init refuses when aipkg.json exists, and future package creation commands should refuse when aipkg-project.json exists)? (FR-002, CHK021)
   - **PASS.** "Mutual exclusivity" section documents both directions: "`aipkg init` refuses to create a project file when a package manifest exists. Future commands that create package manifests will refuse when a project file exists."
-- [x] POST022 Does `spec/naming.md` document three-segment install directory naming alongside the existing two-segment adapter convention, noting that adapters may use a shorter form? (DD-001, R-001, CHK017)
-  - **PASS.** "Dot-notation" section has two subsections: "Install directory naming (three-segment)" with examples and rationale, and "Adapter naming (two-segment)" noting adapters "may use a shorter two-segment form if the target tool has its own namespacing." Summary table also distinguishes both forms.
+- [x] POST022 ~~Does `spec/naming.md` document three-segment install directory naming?~~ **SUPERSEDED.** Decision 72 dropped three-segment naming. The install directory naming subsection and summary table row were removed from `spec/naming.md`. Dot-notation now only covers adapter naming (two-segment).
 
 ## Cross-Spec Consistency
 
@@ -75,10 +73,10 @@ These items were deferred during the pre-implementation audit as install-command
   - **Deferral appropriate.** The init command does not create `.aipkg/` or `.gitignore`. The documentation correctly states `.gitignore` is created "when `.aipkg/` is first created inside a git repository", which is install-command scope. The detection method can be defined when implementing the install command.
 - [x] POST027 **Merged file formats** (CHK011): `mcp.json` JSON structure and `agent-instructions.md` marker format are unspecified. Still appropriate for deferral to install command?
   - **Deferral appropriate.** The project documentation describes merged files at the conceptual level (ownership model, overwrite behavior). The specific JSON structure and marker format are install-command implementation details.
-- [x] POST028 **Installed artifact file extensions** (CHK015): Relationship between scoped name and file extension is unspecified (`.ext` placeholder). Still appropriate for deferral?
-  - **Deferral appropriate.** The documentation examples use concrete extensions (`.md` for prompts/commands/agents, directory for skills), but the formal mapping rule belongs with the install command. The examples in `spec/project.md` and `spec/naming.md` are illustrative, not normative.
+- [x] POST028 **Installed artifact file extensions** (CHK015): Relationship between artifact name and file extension is unspecified. Still appropriate for deferral?
+  - **Deferral appropriate.** The formal mapping rule belongs with the install command. Install directory layout now shows only the well-known directories without example artifacts.
 - [x] POST029 **Installed skill directory structure** (CHK016): Whether installed skills preserve original directory structure is unspecified. Still appropriate for deferral?
-  - **Deferral appropriate.** The documentation shows `scope.pkg.skill-name/SKILL.md` in the layout, which implies a flat structure. The exact rules for multi-file skills belong with the install command.
+  - **Deferral appropriate.** The exact rules for multi-file skills belong with the install command.
 
 ## Test Coverage
 

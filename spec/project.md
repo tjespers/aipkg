@@ -89,21 +89,14 @@ When packages are installed, their artifacts are placed in the `.aipkg/` directo
 .aipkg/
 ├── .gitignore              # Ignores all contents except itself
 ├── skills/                 # Individual skill directories
-│   ├── scope.pkg.skill-a/
-│   │   └── SKILL.md
-│   └── scope.pkg.skill-b/
-│       └── SKILL.md
 ├── prompts/                # Individual prompt files
-│   └── scope.pkg.code-review.md
 ├── commands/               # Individual command files
-│   └── scope.pkg.commit-msg.md
 ├── agents/                 # Individual agent persona files
-│   └── scope.pkg.go-expert.md
 ├── mcp.json                # Merged MCP server configs (all packages)
 └── agent-instructions.md   # Merged agent instructions (all packages)
 ```
 
-Four artifact types (skill, prompt, command, agent) are placed as individual files or directories in type-specific subdirectories. Two mergeable types (mcp-server, agent-instructions) contribute to shared files at the `.aipkg/` root.
+Four artifact types (skill, prompt, command, agent) are placed as individual files or directories in type-specific subdirectories. Two mergeable types (mcp-server, agent-instructions) contribute to shared files at the `.aipkg/` root. The naming and placement of individual artifacts within these directories is defined by the install command specification.
 
 ### `.gitignore`
 
@@ -119,40 +112,6 @@ This prevents accidental commits of installed artifacts. The `.gitignore` itself
 ### Merged files
 
 `mcp.json` and `agent-instructions.md` at the `.aipkg/` root are fully aipkg-managed. They are generated and overwritten by install and update operations. Manual edits to these files will be lost. If you need custom MCP server configs or agent instructions, maintain them outside `.aipkg/`.
-
-## Scoped artifact naming
-
-Installed artifacts use a three-segment dot-notation that incorporates the source package identity:
-
-```text
-scope.package-name.artifact-name
-```
-
-This naming convention serves two purposes:
-
-1. **Collision prevention.** Two packages from the same scope can both have an artifact named `test-writer`. The three-segment name (`alice.pkg-a.test-writer` vs. `alice.pkg-b.test-writer`) keeps them distinct.
-2. **Traceability.** Given any installed artifact name, you can reconstruct the source package. `alice.blog-tools.code-review` traces back to `@alice/blog-tools`.
-
-### Parsing
-
-Split on `.`. The first segment is the scope, the last segment is the artifact name, and the middle segment is the package name. This is unambiguous because scope names and package names cannot contain dots (dots are reserved as the namespace separator).
-
-### Examples
-
-Given a package `@alice/blog-tools` with artifacts `code-review` (prompt) and `test-writer` (skill):
-
-```text
-.aipkg/prompts/alice.blog-tools.code-review.md
-.aipkg/skills/alice.blog-tools.test-writer/SKILL.md
-```
-
-Given a package `@bob/deploy-tools` with an artifact `deploy` (command):
-
-```text
-.aipkg/commands/bob.deploy-tools.deploy.md
-```
-
-For merged types, the scoped name appears as a key or marker within the merged file rather than as a filename.
 
 ## Mutual exclusivity
 

@@ -83,7 +83,7 @@ This repository contains the **aipkg specification**: reference documentation an
 | -------------------- | ------------------------------------------------------------------------------------------------- |
 | **Package manifest** | The `aipkg.json` schema for both `project` and `package` manifests                                |
 | **Artifact types**   | Conventions for each artifact type: skill, agent, agent-instructions, prompt, command, mcp-server |
-| **Naming rules**     | Scoped naming (`@scope/name`), reserved namespaces, dot-notation for installed artifacts          |
+| **Naming rules**     | Scoped naming (`@scope/name`), reserved namespaces, naming conventions for installed artifacts    |
 | **Package archive**  | The `.aipkg` format (zip), internal structure                                                     |
 | **Source types**     | Interface contract for package sources (GitHub, HTTP, and future sources)                         |
 | **Adapters**         | Interface contract for tool-specific adapters (Claude Code, Cursor, Windsurf, etc.)               |

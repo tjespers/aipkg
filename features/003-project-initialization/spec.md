@@ -83,12 +83,6 @@ A developer runs `aipkg init` in a directory that contains an `aipkg.json` (a pa
 - **FR-010**: The `.aipkg/` directory MUST NOT be created by `aipkg init`. It materializes on demand when the first package is installed.
 - **FR-011**: Merged files in `.aipkg/` (`mcp.json`, `agent-instructions.md`) are fully aipkg-managed. They are generated and overwritten by install and update operations. Manual edits to these files will be lost. The reference documentation (FR-019) MUST make this ownership model explicit, including the expected behavior on install/update and the fact that manual modifications are not preserved.
 
-**Scoped artifact naming:**
-
-- **FR-012**: Installed artifacts MUST use a scoped naming convention that incorporates the source package identity. This prevents name collisions when multiple packages contribute artifacts of the same type to the same install directory.
-- **FR-013**: The naming convention MUST enable traceability from any installed artifact back to its source package, so that removal and update operations can identify which files belong to which package.
-- **FR-014**: The exact scoped naming format is deferred to the planning phase, pending research into naming patterns supported by target tools (Claude Code, Cursor, etc.). The existing dot-notation convention defined in `spec/naming.md` serves as the starting point.
-
 **Init command:**
 
 - **FR-015**: `aipkg init` MUST create `aipkg-project.json` in the current directory with an empty `require` object.
@@ -98,19 +92,18 @@ A developer runs `aipkg init` in a directory that contains an `aipkg.json` (a pa
 
 **Documentation:**
 
-- **FR-019**: The project model (project file, install directory layout, scoped naming) MUST be documented as reference material in `spec/`. This documentation is a deliverable of this feature, not a follow-up task.
+- **FR-019**: The project model (project file, install directory layout) MUST be documented as reference material in `spec/`. This documentation is a deliverable of this feature, not a follow-up task.
 
 ### Key Entities
 
-- **Project File** (`aipkg-project.json`): A JSON file at the project root that declares package dependencies via a `require` map and tracks the schema version via `specVersion`. Contains no identity fields. Serves as both the dependency declaration and the installed-package registry (the `require` map combined with the scoped naming convention provides full traceability of installed artifacts).
+- **Project File** (`aipkg-project.json`): A JSON file at the project root that declares package dependencies via a `require` map and tracks the schema version via `specVersion`. Contains no identity fields.
 - **Install Directory** (`.aipkg/`): A categorized directory at the project root where installed artifacts live. Contains well-known subdirectories for individual artifact types and fully aipkg-managed merged files for mergeable types. Created on demand, gitignored by default.
-- **Installed Artifact**: A package artifact placed in the appropriate `.aipkg/` subdirectory using a scoped name derived from the source package identity. Individual types (skills, prompts, commands, agents) are placed as separate files or directories. Mergeable types (mcp-servers, agent-instructions) contribute to shared files at the `.aipkg/` root.
+- **Installed Artifact**: A package artifact placed in the appropriate `.aipkg/` subdirectory using its original name from the archive. Individual types (skills, prompts, commands, agents) are placed as separate files or directories. Mergeable types (mcp-servers, agent-instructions) contribute to shared files at the `.aipkg/` root.
 
 ## Assumptions
 
 - The six artifact types and their classification into individual vs. mergeable categories are defined by the package foundation specification (001) and `spec/artifacts.md`. This feature does not add or modify artifact types.
 - The `require` field in the project file uses the same scoped name format (`@scope/package-name`) as defined in `spec/schema/aipkg.json`. The name validation pattern is reusable. The version pattern needs extending: the package manifest uses strict MAJOR.MINOR.PATCH, while the project file also accepts optional pre-release identifiers per FR-004 (e.g. `1.0.0-beta.1`).
-- Dot-notation as defined in `spec/naming.md` provides the basis for scoped artifact naming. The planning phase will finalize whether the format needs to include the package name in addition to scope and artifact name, based on collision analysis and tool compatibility research.
 - The `.aipkg/` directory contains no committed files in v1. The strict `.gitignore` is sufficient; no exceptions are needed.
 - The project `require` field handles installed dependencies resolved at install time. Package-level dependencies (bundled at pack time) are a separate concern that will be specced independently. This feature does not modify the package manifest schema.
 - The mutual exclusivity check (FR-017) is a simple file-existence guard with no interactive component. It behaves identically in interactive and non-interactive environments.
@@ -122,6 +115,6 @@ A developer runs `aipkg init` in a directory that contains an `aipkg.json` (a pa
 - **SC-001**: A developer can initialize a project with a single command (`aipkg init`) and no prior setup or configuration.
 - **SC-002**: Project initialization produces exactly one file (`aipkg-project.json`). No directories, no config files, no noise.
 - **SC-003**: A developer who accidentally runs `aipkg init` in a package directory is blocked with a clear error. No files are created, and the error points them to the right commands (`aipkg require` / `aipkg install`).
-- **SC-004**: The project file format, install directory layout, and scoped naming requirements are documented clearly enough that the install command (AIPKG-10) can implement them without ambiguity or additional design work.
+- **SC-004**: The project file format and install directory layout are documented clearly enough that the install command (AIPKG-10) can implement them without ambiguity or additional design work.
 - **SC-005**: The project file JSON Schema is complete and validates both valid and invalid project files correctly. A valid project file with dependencies passes validation; a file with malformed package names or invalid version strings fails.
 - **SC-006**: An existing `aipkg-project.json` is never overwritten or modified by running `aipkg init`.
