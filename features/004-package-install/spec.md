@@ -9,18 +9,18 @@
 
 ### User Story 1 - Add a package to a project (Priority: P1)
 
-A developer working on a project wants to use an AI skill published to the aipkg registry. They run `aipkg require @tjespers/golang-expert` in their project root. The CLI resolves the package from the registry, downloads the `.aipkg` archive, verifies its integrity, unpacks it into the project's install directory, and records the dependency in `aipkg-project.json`. The developer now has the package available locally.
+A developer working on a project wants to use an AI skill published to the aipkg registry. They run `aipkg require @tjespers/golang-expert` in their project root. The CLI resolves the package from the registry, downloads the `.aipkg` archive to the global cache, verifies its integrity, places the package's artifacts into the project's categorized directories (`.aipkg/skills/`, `.aipkg/prompts/`, etc.), and records the dependency in `aipkg-project.json`. The developer now has the package's artifacts available in their project.
 
 **Why this priority**: This is the core value proposition. Without the ability to add a package, the CLI is a pack-only tool. Everything else (bulk install, version pinning) builds on this flow.
 
-**Independent Test**: Can be fully tested by setting up a local static file server with a per-package JSON file and a corresponding `.aipkg` archive, pointing `AIPKG_REGISTRY` at it, initializing a project with `aipkg init`, and running `aipkg require @scope/name`. Verify that the archive is unpacked and the project file is updated.
+**Independent Test**: Can be fully tested by setting up a local static file server with a per-package JSON file and a corresponding `.aipkg` archive, pointing `AIPKG_REGISTRY` at it, initializing a project with `aipkg init`, and running `aipkg require @scope/name`. Verify that the package's artifacts are placed in the categorized directories and the project file is updated.
 
 **Acceptance Scenarios**:
 
-1. **Given** an initialized project (with `aipkg-project.json`) and a registry containing `@tjespers/golang-expert` at version `1.0.0`, **When** the developer runs `aipkg require @tjespers/golang-expert`, **Then** the package is downloaded, verified, and unpacked to `.aipkg/packages/@tjespers/golang-expert/`, and `aipkg-project.json` contains `"@tjespers/golang-expert": "1.0.0"` in its `require` field.
-2. **Given** a successful require, **When** the developer inspects `.aipkg/packages/@tjespers/golang-expert/`, **Then** the directory contains the package's `aipkg.json` manifest and all its artifact files (the top-level archive directory has been stripped per the archive format spec).
+1. **Given** an initialized project (with `aipkg-project.json`) and a registry containing `@tjespers/golang-expert` at version `1.0.0` with a `debug` skill artifact, **When** the developer runs `aipkg require @tjespers/golang-expert`, **Then** the archive is cached, the skill artifact is placed at `.aipkg/skills/tjespers.golang-expert.debug/`, and `aipkg-project.json` contains `"@tjespers/golang-expert": "1.0.0"` in its `require` field.
+2. **Given** a successful require of a package containing multiple artifact types, **When** the developer inspects `.aipkg/`, **Then** each artifact is placed in the appropriate categorized directory (`.aipkg/skills/`, `.aipkg/prompts/`, etc.) using three-segment naming (`scope.package.artifact`), and mergeable artifacts (mcp-server, agent-instructions) are merged into their respective files.
 3. **Given** a successful require, **When** the developer inspects `.aipkg/`, **Then** a `.gitignore` file exists that ignores all contents (if the project is inside a git repository).
-4. **Given** a package already required at version `1.0.0`, **When** the developer runs `aipkg require @tjespers/golang-expert` and the registry now has `1.1.0` as the latest, **Then** the installed package is replaced with `1.1.0` and `aipkg-project.json` is updated to reflect `1.1.0`.
+4. **Given** a package already required at version `1.0.0`, **When** the developer runs `aipkg require @tjespers/golang-expert` and the registry now has `1.1.0` as the latest, **Then** the old artifacts are removed, the new version's artifacts are placed, and `aipkg-project.json` is updated to reflect `1.1.0`.
 5. **Given** a package already installed at the latest version, **When** the developer runs `aipkg require @tjespers/golang-expert`, **Then** the command reports that the package is already up to date and makes no changes.
 
 ---
@@ -35,7 +35,7 @@ A developer clones or checks out a project that has packages listed in its `aipk
 
 **Acceptance Scenarios**:
 
-1. **Given** an `aipkg-project.json` with `require` containing `"@tjespers/golang-expert": "1.0.0"` and `"@alice/blog-writer": "2.0.0"`, **When** the developer runs `aipkg install`, **Then** both packages are resolved, downloaded, verified, and unpacked to their respective directories under `.aipkg/packages/`.
+1. **Given** an `aipkg-project.json` with `require` containing `"@tjespers/golang-expert": "1.0.0"` and `"@alice/blog-writer": "2.0.0"`, **When** the developer runs `aipkg install`, **Then** both packages are resolved, downloaded, verified, and their artifacts are placed in the project's categorized directories.
 2. **Given** some packages are already installed at the correct versions, **When** the developer runs `aipkg install`, **Then** already-installed packages are skipped and only missing or outdated packages are downloaded.
 3. **Given** an `aipkg-project.json` with an empty `require` object, **When** the developer runs `aipkg install`, **Then** the command completes successfully with a message indicating no packages to install.
 
@@ -59,7 +59,7 @@ A developer needs a specific version of a package rather than the latest. They r
 - What happens when no `aipkg-project.json` exists? Both `aipkg require` and `aipkg install` refuse with a clear error directing the developer to run `aipkg init` first.
 - What happens when the registry is unreachable (network error, DNS failure)? The command fails with an error describing the network issue and the registry URL it tried to reach.
 - What happens when the per-package index entry returns a non-200 HTTP status? A 404 means the package is not found. Other errors are reported as registry errors with the HTTP status.
-- What happens when the SHA-256 hash of the downloaded archive does not match the hash in the index entry? The command refuses to extract, deletes the downloaded file, and reports an integrity verification failure.
+- What happens when the SHA-256 hash of the downloaded archive does not match the hash in the index entry? The command refuses to extract, removes the file from the cache, and reports an integrity verification failure.
 - What happens when the archive URL in the dist block is unreachable? The command fails with a download error showing the URL that failed.
 - What happens when the developer has no write permission on the project directory? The command fails with a filesystem error.
 - What happens when `aipkg require` is run in a package directory (one containing `aipkg.json`)? The command refuses with an error explaining that `require` operates on projects, not packages. This mirrors the mutual exclusivity guard from `aipkg init`.
@@ -93,16 +93,19 @@ A developer needs a specific version of a package rather than the latest. They r
 - **FR-010**: The default registry URL MUST use HTTPS. When following HTTP redirects, the CLI MUST NOT downgrade an HTTPS URL to HTTP. Dist URLs using plain HTTP are permitted to support local development and testing with static file servers.
 - **FR-011**: The CLI MUST validate that the per-package index entry's `type` field is `"package"`. If the type is not `"package"` (e.g., a future `"recipe"` type), the CLI MUST fail with a clear error indicating that the entry type is not supported by this command.
 
-**Package extraction:**
+**Archive caching:**
 
-- **FR-012**: Packages MUST be extracted to `.aipkg/packages/@scope/name/` within the project root. The top-level directory inside the archive is stripped during extraction, consistent with the archive format specification.
-- **FR-013**: If a package is already installed at a different version, the existing package directory MUST be completely removed before the new version is extracted.
-- **FR-014**: If a package is already installed at the same version that would be installed, the command MUST skip the archive download and report that the package is already up to date. The metadata fetch still occurs to determine which version is current. The installed version is determined by reading the `version` field from the installed package's `aipkg.json` manifest.
+- **FR-012**: Downloaded `.aipkg` archives MUST be stored in a global cache directory at `~/.aipkg/cache/`. The cache directory MUST be created on demand. Archives MUST be named using a scheme that includes scope, package name, and version to avoid collisions. If a verified archive for the requested version already exists in the cache, the download MUST be skipped.
+
+**Artifact placement:**
+
+- **FR-013**: After verification, the CLI MUST read the `artifacts` array from the archive's `aipkg.json` manifest and place each artifact into the corresponding categorized directory within `.aipkg/` using three-segment naming (`scope.package.artifact`). Directory-type artifacts (skills) are placed as directories; file-type artifacts (prompts, commands, agents) are placed as files. Mergeable artifact types (mcp-server, agent-instructions) are merged into their respective project-level files (`.aipkg/mcp.json`, `.aipkg/agent-instructions.md`), keyed by the three-segment name to allow clean removal. During placement, the CLI MUST transform artifact content so that each artifact's internal identity reflects its three-segment installed name. The required transformations per artifact type are: (1) **skill**: the `name` field in SKILL.md frontmatter MUST be updated to match the installed directory name, per the Agent Skills specification; (2) **command**: frontmatter metadata MUST be updated to reflect the three-segment name; (3) **mcp-server**: the server entry key MUST use the three-segment name when merged, preventing collisions between packages that provide identically-named servers; (4) **agent-instructions**: the section marker MUST use the three-segment name when merged; (5) **prompt** and **agent**: no internal content transformation required (the three-segment naming is applied to the file/directory name only).
+- **FR-014**: If a package is already installed at a different version, the CLI MUST remove all artifacts belonging to the previous version before placing the new version's artifacts. Artifacts are identified by their three-segment naming prefix (`scope.package.*`) across all categorized directories, and the package's contributions to merged files MUST be removed.
+- **FR-015**: If a package is already installed at the same version that would be installed, the command MUST skip the operation and report that the package is already up to date. The metadata fetch still occurs to determine which version is current. The installed version is determined from the `require` field in `aipkg-project.json`.
 
 **Install directory management:**
 
-- **FR-015**: The `.aipkg/` directory MUST be created on demand when the first package is installed. If the project root is inside a git repository, a `.gitignore` file MUST be placed inside `.aipkg/` that ignores all contents (per the project initialization specification, FR-009).
-- **FR-016**: The `packages/` subdirectory within `.aipkg/` MUST be created on demand. After install and before adapter execution (AIPKG-11), `.aipkg/` contains only `packages/` and `.gitignore`. The categorized artifact directories (`.aipkg/skills/`, `.aipkg/prompts/`, etc.) and merged files defined by the project initialization specification materialize when adapters run.
+- **FR-016**: The `.aipkg/` directory and its categorized subdirectories MUST be created on demand when a package is installed. If the project root is inside a git repository, a `.gitignore` file MUST be placed inside `.aipkg/` that ignores all contents (per the project initialization specification, FR-009).
 
 **Project file management:**
 
@@ -115,26 +118,28 @@ A developer needs a specific version of a package rather than the latest. They r
 
 **Documentation:**
 
-- **FR-023**: The per-package index entry format, resolution algorithm, and install directory layout under `.aipkg/packages/` MUST be documented as reference material in `spec/`. This documentation is a deliverable of this feature.
+- **FR-023**: The per-package index entry format, resolution algorithm, artifact placement layout within `.aipkg/`, per-artifact-type content transformations during placement, and archive caching behavior MUST be documented as reference material in `spec/`. This documentation is a deliverable of this feature.
 
 ### Key Entities
 
 - **Per-Package Index Entry**: A JSON document served by the registry at `{base_url}/@scope/name.json`. Contains the package name, description, type (`"package"` for dist strategy entries), and a versions map where each key is a semver version string and each value contains a dist block with the archive URL and SHA-256 hash.
 - **Dist Block**: A structure within a version entry that provides the download URL for the `.aipkg` archive and the expected SHA-256 hash for integrity verification. The URL can point to any HTTP or HTTPS endpoint (GitHub Releases, a CDN, a static file server, a local test server).
-- **Installed Package**: A directory at `.aipkg/packages/@scope/name/` containing the extracted archive contents (manifest, artifact files). The directory's `aipkg.json` is the source of truth for the installed version.
+- **Installed Package**: A set of artifacts placed in the project's `.aipkg/` categorized directories, identified by their three-segment naming prefix (`scope.package.*`). The installed version is tracked in `aipkg-project.json`'s `require` field. The original `.aipkg` archive is preserved in the global cache at `~/.aipkg/cache/`.
+- **Archive Cache**: The global directory at `~/.aipkg/cache/` where downloaded and verified `.aipkg` archives are stored. Prevents re-downloading archives that have already been fetched and verified.
 
 ## Assumptions
 
 - The project initialization feature (003) has established `aipkg-project.json` as the project file with `specVersion` and `require` fields. This feature reads from and writes to that file. It does not modify the format.
 - The archive format (002) is stable. Archives contain a single top-level directory, and extraction strips it.
-- This feature does not handle bundled dependencies. The `deps/` directory concept and pack-time dependency resolution are separate concerns that will be specced independently when that capability is designed.
 - Package-level dependencies (bundled at pack time) are a separate concern. When that capability is designed, it will introduce its own schema fields and specification. This feature does not depend on or interact with package-level dependencies.
-- Adapter execution (AIPKG-11) is entirely separate. This feature places raw package contents under `.aipkg/packages/`. After install (before adapters run), `.aipkg/` contains only `packages/` and `.gitignore`. Adapters will later read from `packages/` and create symlinks, merged files, and tool-specific configurations in the categorized directories (`.aipkg/skills/`, `.aipkg/prompts/`, etc.) defined by the project initialization specification.
+- Adapter execution (AIPKG-11) is entirely separate. This feature places artifacts into `.aipkg/` categorized directories (the natural aipkg format). Adapters will later bridge from `.aipkg/` to tool-specific directories (`.claude/`, `.cursor/`, etc.) by creating symlinks and tool-specific configurations.
 - The central registry at `packages.aipkg.dev` will serve static JSON files. The CLI does not depend on any server-side logic; any static file server can act as a registry.
-- No caching is implemented in v1. Every `require` or `install` operation fetches fresh metadata from the registry. This is acceptable for the initial feature and avoids complexity around cache invalidation.
+- Metadata is always fetched fresh from the registry. No metadata caching is implemented in v1. Archive caching (in `~/.aipkg/cache/`) avoids re-downloading archives that have already been verified. No cache eviction or size management is implemented in v1.
 - Network behavior (timeouts, retries, progress indication) is not specified in v1. Every operation fetches fresh data with default HTTP client behavior. This is a conscious deferral.
 - Package names in the index entry's `name` field follow the established naming rules from `spec/naming.md`. The CLI reuses existing name validation logic.
 - The `require` field in `aipkg-project.json` uses strict semver (MAJOR.MINOR.PATCH) for dist strategy packages. Pre-release identifiers in require values are allowed by the project schema but will not appear in practice until the source/recipe strategy is implemented.
+- Lockfile generation is deferred. With exact version pins in `aipkg-project.json` and no version range support, a lockfile provides no additional value. It will be introduced when version range constraints are added.
+- Three-segment naming uses dots as separators (`scope.package.artifact`), which the current Agent Skills specification does not allow in the `name` field (restricted to `[a-z0-9-]`). This is accepted as a known incompatibility for v1. In practice, skills work correctly; only strict Agent Skills validators would flag the dots. The aipkg project will engage with the Agent Skills community (agentskills/agentskills#81 and related discussions) to propose loosening the naming constraint to support scoped distribution.
 
 ## Success Criteria *(mandatory)*
 
